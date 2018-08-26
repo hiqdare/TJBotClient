@@ -59,5 +59,5 @@ socket.on('disconnect', function(){
 });
 
 function getURL() {
-	return 'http://localhost:3456';
+	return 'http://192.168.1.104:3456';
 }
