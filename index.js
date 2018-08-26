@@ -2,6 +2,8 @@
 
 var os = require('os');
 
+const shell = require('shelljs');
+
 var interfaces = os.networkInterfaces();
 var config = require('./tjbot.json');
 var tjbot = {};
@@ -29,8 +31,20 @@ tjbot.os_type = os.type();
 tjbot.os_release = os.release();
 tjbot.os_platform = os.platform();
 tjbot.nodejs_version = process.version;
-console.log("Opening connection");
+tjbot.npm_version = shell.exec('npm version');
+tjbot.npm_package = shell.exec('npm list');
+tjbot.os_info = shell.exec('cat /etc/os-release');
 
+/*var script = exec('npm version', (error, stdout, stderr) => {
+	tjbot.npm_version = stdout.split(/\r?\n/);
+	tjbot.npm_version_stderr = stderr.split(/\r?\n/);
+	if (error != null) {
+		tjbot.npm_version_error = error;
+	}
+});*/
+
+console.log("Opening connection");
+	
 var socket = require('socket.io-client')(getURL());
 socket.on('start', function(data){
 	console.log('a great user connected');
@@ -43,7 +57,6 @@ socket.on('event', function(data){
 socket.on('disconnect', function(){
 	console.log('a great user disconnected');
 });
-
 
 function getURL() {
 	return 'http://localhost:3456';
