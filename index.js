@@ -31,9 +31,10 @@ tjbot.os_type = os.type();
 tjbot.os_release = os.release();
 tjbot.os_platform = os.platform();
 tjbot.nodejs_version = process.version;
-tjbot.npm_version = shell.exec('npm version');
-tjbot.npm_package = shell.exec('npm list');
-tjbot.os_info = shell.exec('cat /etc/os-release');
+tjbot.npm_version = shell.exec('npm version').split(/\r?\n/);
+tjbot.npm_package = shell.exec('npm list').split(",");
+tjbot.os_info = shell.exec('cat /etc/os-release').split(" ");
+tjbot.hostname = shell.exec('cat /etc/hostname');
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
 	tjbot.npm_version = stdout.split(/\r?\n/);
