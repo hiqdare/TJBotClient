@@ -28,6 +28,7 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 });
 
 tjbot.name = config.name;
+tjbot.version = version;
 tjbot.os_type = os.type();
 tjbot.os_release = os.release();
 tjbot.os_platform = os.platform();
