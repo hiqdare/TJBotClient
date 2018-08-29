@@ -40,12 +40,15 @@ tjbot.npm_package.forEach(function(part, index) {
 	console.log(part.split("@"));
 	tjbot.npm_package[index] = part.split("@");
 });
-tjbot.os_info = shell.exec('cat /etc/os-release').split(" ");
-tjbot.os_info.forEach(function(part, index) {
-	console.log(part.split("="));
-	tjbot.os_info[index] = part.split("=");
-});
-tjbot.hostname = shell.exec('cat /etc/hostname');
+
+if (tjbot.os_platform == 'linux') {
+	tjbot.os_info = shell.exec('cat /etc/os-release').split(" ");
+	tjbot.os_info.forEach(function(part, index) {
+		console.log(part.split("="));
+		tjbot.os_info[index] = part.split("=");
+	});
+	tjbot.hostname = shell.exec('cat /etc/hostname');
+}
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
 	tjbot.npm_version = stdout.split(/\r?\n/);
@@ -70,6 +73,12 @@ socket.on('disconnect', function(){
 	console.log('a great user disconnected');
 });
 
+socket.on('update', function(){
+	shell.exec('git pull')
+	socket.emit('refresh', JSON.stringify(tjbot));
+});
+
 function getURL() {
-	return 'http://192.168.1.104:3456';
+	return 'http://127.0.0.1:3456';
+	//return 'http://192.168.1.104:3456';
 }
