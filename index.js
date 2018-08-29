@@ -3,6 +3,7 @@
 var os = require('os');
 
 const shell = require('shelljs');
+const version = '0.1.1'
 
 var interfaces = os.networkInterfaces();
 var config = require('./tjbot.json');
