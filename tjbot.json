@@ -1,1 +1,5 @@
-{"name": "Fox"}
+{
+    "name": "Fox",
+    "image": "swissbot.jpg",
+    "chocolate": "toblerone"
+}

@@ -28,14 +28,20 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 });
 
 tjbot.name = config.name;
-tjbot.version = version;
+tjbot.image = config.image;
+tjbot.chocolate = config.chocolate;
+tjbot.source_version = version;
 tjbot.os_type = os.type();
 tjbot.os_release = os.release();
 tjbot.os_platform = os.platform();
 tjbot.nodejs_version = process.version;
-tjbot.npm_version = shell.exec('npm version').split(",");
-tjbot.npm_version.forEach(function(part, index) {
-	tjbot.npm_version[index] = part.split(":");
+tjbot.npm_version = {};
+var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
+npm_version.forEach(function(element) {
+	 var entry = element.split(":");
+	 if (entry.length == 2) {
+		tjbot.npm_version[entry[0].trim()] = entry[1].trim();
+	 }
 });
 tjbot.npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 tjbot.npm_package.forEach(function(part, index) {
@@ -75,9 +81,16 @@ socket.on('disconnect', function(){
 	console.log('a great user disconnected');
 });
 
-socket.on('update', function(){
-	shell.exec('git pull')
-	socket.emit('refresh', JSON.stringify(tjbot));
+socket.on('update', function(data){
+	if (data == 'source') {
+		shell.exec('git pull');
+	} else if (data == 'nodejs') {
+		shell.exec('sudo npm cache clean -f');
+		shell.exec('sudo npm install -g n');
+		shell.exec('sudo n stable');
+	} else if (data == 'npm') {
+		shell.exec('npm update -g');
+	}
 });
 
 function getURL() {
