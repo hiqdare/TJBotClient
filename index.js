@@ -3,7 +3,6 @@
 var os = require('os');
 
 const shell = require('shelljs');
-const version = '0.1.2'
 
 var interfaces = os.networkInterfaces();
 var config = require('./tjbot.json');
@@ -30,7 +29,6 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 tjbot.name = config.name;
 tjbot.image = config.image;
 tjbot.chocolate = config.chocolate;
-tjbot.source_version = version;
 tjbot.os_type = os.type();
 tjbot.os_release = os.release();
 tjbot.os_platform = os.platform();
@@ -70,7 +68,6 @@ console.log("Opening connection");
 	
 var socket = require('socket.io-client')(getURL());
 socket.on('start', function(data){
-	console.log('a great user connected');
 	console.log(data);
 	socket.emit('checkin', JSON.stringify(tjbot));
 });
@@ -78,7 +75,7 @@ socket.on('event', function(data){
 	console.log('a great user event');
 });
 socket.on('disconnect', function(){
-	console.log('a great user disconnected');
+	console.log('Socket disconnected');
 });
 
 socket.on('update', function(data){
@@ -94,6 +91,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	return 'http://127.0.0.1:3456';
+	return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	//return 'http://127.0.0.1:3456';
 	//return 'http://192.168.1.104:3456';
 }
