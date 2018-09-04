@@ -30,7 +30,7 @@ tjbot.name = config.name;
 tjbot.image = config.image;
 tjbot.chocolate = config.chocolate;
 tjbot.os_type = os.type();
-tjbot.os_release = os.release();
+tjbot.firmware = os.release();
 tjbot.os_platform = os.platform();
 tjbot.nodejs_version = process.version;
 tjbot.npm_version = {};
@@ -54,6 +54,7 @@ if (tjbot.os_platform == 'linux') {
 		tjbot.os_info[index] = part.split("=");
 	});
 	tjbot.hostname = shell.exec('cat /etc/hostname');
+	tjbot.cpuinfo = require("fs").readFileSync("/proc/cpuinfo", "utf8");
 }
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
@@ -91,7 +92,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	//return 'http://127.0.0.1:3456';
+	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	return 'http://127.0.0.1:3456';
 	//return 'http://192.168.1.104:3456';
 }
