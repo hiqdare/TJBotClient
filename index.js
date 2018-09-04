@@ -54,7 +54,7 @@ if (tjbot.os_platform == 'linux') {
 		tjbot.os_info[index] = part.split("=");
 	});
 	tjbot.hostname = shell.exec('cat /etc/hostname');
-	tjbot.cpuinfo = require("fs").readFileSync("/proc/cpuinfo", "utf8");
+	tjbot.cpuinfo = shell.exec('cat /proc/cpuinfo');
 }
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
