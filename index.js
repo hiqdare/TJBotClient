@@ -34,17 +34,22 @@ tjbot.firmware = os.release();
 tjbot.os_platform = os.platform();
 tjbot.nodejs_version = process.version;
 tjbot.npm_version = {};
+tjbot.npm_package = {};
 var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
+var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 var entry = element.split(":");
 	 if (entry.length == 2) {
 		tjbot.npm_version[entry[0].trim()] = entry[1].trim();
 	 }
 });
-tjbot.npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
-tjbot.npm_package.forEach(function(part, index) {
+
+npm_package.forEach(function(part, index) {
 	console.log(part.split("@"));
-	tjbot.npm_package[index] = part.split("@");
+	var entry = part.split("@");
+	if (entry.length == 2) {
+		tjbot.npm_package[entry[0].trim()] = entry[1].trim();
+	}
 });
 
 if (tjbot.os_platform == 'linux') {
@@ -83,9 +88,9 @@ socket.on('update', function(data){
 	if (data == 'source') {
 		shell.exec('git pull');
 	} else if (data == 'nodejs') {
-		shell.exec('sudo npm cache clean -f');
-		shell.exec('sudo npm install -g n');
-		shell.exec('sudo n stable');
+		shell.exec('npm cache clean -f');
+		shell.exec('npm install -g n');
+		shell.exec('n stable');
 	} else if (data == 'npm') {
 		shell.exec('npm update -g');
 	}
