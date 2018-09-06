@@ -70,7 +70,7 @@ if (tjbot.os_platform == 'linux') {
 	}
 });*/
 
-console.log("Opening connection");
+console.log("Connecting to " + getURL());
 	
 var socket = require('socket.io-client')(getURL());
 socket.on('start', function(data){
