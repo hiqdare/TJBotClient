@@ -97,7 +97,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	//return 'http://127.0.0.1:3456';
+	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	return 'http://127.0.0.1:3456';
 	//return 'http://192.168.1.104:3456';
 }
