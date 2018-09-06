@@ -36,7 +36,7 @@ tjbot.nodejs_version = process.version;
 tjbot.npm_version = {};
 tjbot.npm_package = {};
 var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
-var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);	
 npm_version.forEach(function(element) {
 	 var entry = element.split(":");
 	 if (entry.length == 2) {
@@ -97,7 +97,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	return 'http://127.0.0.1:3456';
+	return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	//return 'http://127.0.0.1:3456';
 	//return 'http://192.168.1.104:3456';
 }
