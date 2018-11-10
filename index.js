@@ -5,7 +5,7 @@ var os = require('os');
 const shell = require('shelljs');
 
 var interfaces = os.networkInterfaces();
-var config = require('./tjbot.json');
+//var config = require('./tjbot.json');
 var tjbot = {};
 var networkKey = 'network';
 tjbot[networkKey] = [];
@@ -26,9 +26,9 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 	});
 });
 
-tjbot.name = config.name;
-tjbot.image = config.image;
-tjbot.chocolate = config.chocolate;
+//tjbot.name = config.name;
+//tjbot.image = config.image;
+//tjbot.chocolate = config.chocolate;
 tjbot.os_type = os.type();
 tjbot.firmware = os.release();
 tjbot.os_platform = os.platform();
@@ -97,7 +97,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	//return 'http://127.0.0.1:3456';
-	//return 'http://192.168.1.104:3456';
+	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	//return 'http://127.0.0.1:3000';
+	return 'http://192.168.1.104:3000';
 }
