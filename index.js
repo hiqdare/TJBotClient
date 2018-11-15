@@ -45,7 +45,7 @@ npm_version.forEach(function(element) {
 });
 
 npm_package.forEach(function(part, index) {
-	console.log(part.split("@"));
+	//console.log(part.split("@"));
 	var entry = part.split("@");
 	if (entry.length == 2) {
 		tjbot.npm_package[entry[0].trim()] = entry[1].trim();
@@ -55,11 +55,17 @@ npm_package.forEach(function(part, index) {
 if (tjbot.os_platform == 'linux') {
 	tjbot.os_info = shell.exec('cat /etc/os-release').split(" ");
 	tjbot.os_info.forEach(function(part, index) {
-		console.log(part.split("="));
+		//console.log(part.split("="));
 		tjbot.os_info[index] = part.split("=");
 	});
 	tjbot.hostname = shell.exec('cat /etc/hostname');
-	tjbot.cpuinfo = shell.exec('cat /proc/cpuinfo');
+	tjbot.cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
+	tjbot.cpuinfo.forEach(function(part, index) {
+		var entry = element.split(/\t:/);
+		if (entry.length == 2) {
+			tjbot.cpuinfo[entry[0].trim()] = entry[1].trim();
+		}
+	})
 }
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
