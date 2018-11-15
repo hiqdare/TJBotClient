@@ -60,7 +60,7 @@ if (tjbot.os_platform == 'linux') {
 	});
 	tjbot.hostname = shell.exec('cat /etc/hostname');
 	tjbot.cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
-	tjbot.cpuinfo.forEach(function(part, index) {
+	tjbot.cpuinfo.forEach(function(element) {
 		var entry = element.split(/\t:/);
 		if (entry.length == 2) {
 			tjbot.cpuinfo[entry[0].trim()] = entry[1].trim();
