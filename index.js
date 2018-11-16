@@ -4,21 +4,6 @@ var os = require('os');
 
 const shell = require('shelljs');
 
-var str = "processor	: 3 \nmodel name	: ARMv7 Processor rev 4 (v7l)\nBogoMIPS	: 76.80\nFeatures	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32 \nCPU implementer	: 0x41\nCPU architecture: 7\nCPU variant	: 0x0\nCPU part	: 0xd03\nCPU revision	: 4";
-
-var strarr = str.split(/\r?\n/);
-var strres = {};
-strarr.forEach(function(element) {
-	var entry = element.split(":");
-	if (entry.length == 2) {
-		strres[entry[0].trim()] = entry[1].trim();
-	}
-});
-
-console.log(strres);
-
-return;
-
 var interfaces = os.networkInterfaces();
 //var config = require('./tjbot.json');
 var tjbot = {};
