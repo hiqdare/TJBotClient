@@ -67,6 +67,8 @@ if (tjbot.os_platform == 'linux') {
 			tjbot.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
 	})
+} else {
+	tjbot.cpuinfo.Serial = "test-serial-1234";
 }
 
 /*var script = exec('npm version', (error, stdout, stderr) => {
@@ -104,7 +106,7 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
 	//return 'http://127.0.0.1:3000';
-	//return 'http://192.168.1.104:3000';
+	return 'http://192.168.1.104:3000';
 }
