@@ -1,6 +1,6 @@
 {
   "name": "tjbotclient",
-  "description":"TJBot client, running locally to connect with TJBotBrowser on the cloud",
+  "description": "TJBot client, running locally to connect with TJBotBrowser on the cloud",
   "version": "0.0.4",
   "author": "Henrique Säuberli sae@zurich.ibm.com",
   "main": "index.js",
@@ -14,7 +14,7 @@
     "socket.io-client": "^2.1.1",
     "tjbot": "latest"
   },
-  "license":"Apache-2.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:hiqdare/tjbotclient.git"
