@@ -1,7 +1,6 @@
 "use strict"; 
 
 var os = require('os');
-var TJBOT = require('tjbot');
 var hardware = ['servo'];
 var tjConfig = {
 	log: { 
@@ -69,14 +68,14 @@ if (data.os_platform == 'linux') {
 			data.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
 	})
+	var TJBOT = require('tjbot');
+	var tj = new TJBOT(hardware, tjConfig, {});
+	tj.wave();
 } else {
 	data.cpuinfo.Serial = "test-serial-1234";
 }
 
 console.log("Connecting to " + getURL());
-
-var tj = new TJBOT(hardware, tjConfig, {});
-tj.wave();
 
 var socket = require('socket.io-client')(getURL());
 socket.on('start', function(data){
@@ -86,7 +85,7 @@ socket.on('start', function(data){
 socket.on('event', function(data){
 	param = JSON.parse(data);
 	if(param.action == 'wave') {
-		tj.wave();
+		//tj.wave();
 	}
 
 });
@@ -107,7 +106,13 @@ socket.on('update', function(data){
 });
 
 function getURL() {
-	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	return 'http://127.0.0.1:3000';
+	var argv = process.argv;
+
+	if (argv.length < 3) {
+		return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	} else {
+		return argv[2] + ':3000';
+	}
+	
 	//return 'http://192.168.1.104:3000';
 }
