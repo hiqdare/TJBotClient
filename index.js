@@ -12,9 +12,9 @@ const shell = require('shelljs');
 
 var interfaces = os.networkInterfaces();
 
-var data = {};
+var tjdata = {};
 var networkKey = 'network';
-data[networkKey] = [];
+tjdata[networkKey] = [];
 
 Object.keys(interfaces).forEach(function(interfaceName) {
 	var alias = 0;
@@ -24,55 +24,63 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 		}
 		
 		if (alias >=  1) {
-			data[networkKey].push(interfaceName + ':' + alias, iface.address);
+			tjdata[networkKey].push(interfaceName + ':' + alias, iface.address);
 		} else {
-			data[networkKey].push(interfaceName, iface.address);
+			tjdata[networkKey].push(interfaceName, iface.address);
 		}
 		++alias;
 	});
 });
 
-data.os_type = os.type();
-data.firmware = os.release();
-data.os_platform = os.platform();
-data.nodejs_version = process.version;
-data.npm_version = {};
-data.npm_package = {};
-data.cpuinfo = {};
+tjdata.os_type = os.type();
+tjdata.firmware = os.release();
+tjdata.os_platform = os.platform();
+tjdata.nodejs_version = process.version;
+tjdata.npm_version = {};
+tjdata.npm_package = {};
+tjdata.cpuinfo = {};
 var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
 var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 var entry = element.split(":");
 	 if (entry.length == 2) {
-		data.npm_version[entry[0].trim()] = entry[1].trim();
+		tjdata.npm_version[entry[0].trim()] = entry[1].trim();
 	 }
 });
 
-npm_package.forEach(function(part, index) {
+npm_package.forEach(function(part) {
 	var entry = part.split("@");
 	if (entry.length == 2) {
-		data.npm_package[entry[0].trim()] = entry[1].trim();
+		tjdata.npm_package[entry[0].trim()] = entry[1].trim();
 	}
 });
 
-if (data.os_platform == 'linux') {
-	data.os_info = shell.exec('cat /etc/os-release').split(" ");
-	data.os_info.forEach(function(part, index) {
-		data.os_info[index] = part.split("=");
+if (tjdata.os_platform == 'linux') {
+	tjdata.os_info = shell.exec('cat /etc/os-release').split(" ");
+	tjdata.os_info.forEach(function(part, index) {
+		tjdata.os_info[index] = part.split("=");
 	});
-	data.hostname = shell.exec('cat /etc/hostname');
+	tjdata.hostname = shell.exec('cat /etc/hostname');
 	var cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
 	cpuinfo.forEach(function(element) {
 		var entry = element.split(":");
 		if (entry.length == 2) {
-			data.cpuinfo[entry[0].trim()] = entry[1].trim();
+			tjdata.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
 	})
 	var TJBOT = require('tjbot');
 	var tj = new TJBOT(hardware, tjConfig, {});
 	tj.wave();
+
+	socket.on('event', function(data){
+		param = JSON.parse(data);
+		if(param.action == 'wave') {
+			tj.wave();
+		}
+	
+	});
 } else {
-	data.cpuinfo.Serial = "test-serial-1234";
+	tjdata.cpuinfo.Serial = "test-serial-1234";
 }
 
 var url = getURL();
@@ -82,14 +90,7 @@ var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
-	socket.emit('checkin', JSON.stringify(data));
-});
-socket.on('event', function(data){
-	param = JSON.parse(data);
-	if(param.action == 'wave') {
-		//tj.wave();
-	}
-
+	socket.emit('checkin', JSON.stringify(tjdata));
 });
 socket.on('disconnect', function(){
 	console.log('Socket disconnected');
@@ -113,7 +114,7 @@ function getURL() {
 	if (argv.length < 3) {
 		return 'https://tjbotbrowser.eu-de.mybluemix.net';
 	} else {
-		return argv[2] + ':3000';
+		return "http://" + argv[2] + ':3000';
 	}
 	
 	//return 'http://192.168.1.104:3000';
