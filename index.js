@@ -68,17 +68,7 @@ if (tjdata.os_platform == 'linux') {
 			tjdata.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
 	})
-	var TJBOT = require('tjbot');
-	var tj = new TJBOT(hardware, tjConfig, {});
-	tj.wave();
 
-	socket.on('event', function(data){
-		param = JSON.parse(data);
-		if(param.action == 'wave') {
-			tj.wave();
-		}
-	
-	});
 } else {
 	tjdata.cpuinfo.Serial = "test-serial-1234";
 }
@@ -92,6 +82,21 @@ socket.on('start', function(data){
 	console.log(data);
 	socket.emit('checkin', JSON.stringify(tjdata));
 });
+
+if (tjdata.os_platform == 'linux') {
+	var TJBOT = require('tjbot');
+	var tj = new TJBOT(hardware, tjConfig, {});
+	tj.wave();
+
+	socket.on('event', function(data){
+		param = JSON.parse(data);
+		if(param.action == 'wave') {
+			tj.wave();
+		}
+
+	});
+}
+
 socket.on('disconnect', function(){
 	console.log('Socket disconnected');
 });
