@@ -89,7 +89,7 @@ if (tjdata.os_platform == 'linux') {
 	tj.wave();
 
 	socket.on('event', function(data){
-		param = JSON.parse(data);
+		var param = JSON.parse(data);
 		if(param.target == 'arm') {
 			if (param.action == 'wave') {
 				tj.wave();
