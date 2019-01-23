@@ -75,10 +75,12 @@ if (data.os_platform == 'linux') {
 	data.cpuinfo.Serial = "test-serial-1234";
 }
 
-console.log("Connecting to " + getURL());
+var url = getURL();
+console.log("Connecting to " + url);
 
-var socket = require('socket.io-client')(getURL());
+var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
+	console.log("connected to " + url);
 	console.log(data);
 	socket.emit('checkin', JSON.stringify(data));
 });
