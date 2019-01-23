@@ -1,13 +1,22 @@
 {
   "name": "tjbotclient",
-  "version": "0.0.3",
+  "description":"TJBot client, running locally to connect with TJBotBrowser on the cloud",
+  "version": "0.0.4",
+  "author": "Henrique Säuberli sae@zurich.ibm.com",
   "main": "index.js",
   "scripts": {
-    "start": "micro"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "dedupe": "^2.1.0",
     "shelljs": "^0.8.2",
-    "socket.io-client": "^2.1.1"
+    "socket.io-client": "^2.1.1",
+    "tjbot": "latest"
+  },
+  "license":"Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:hiqdare/tjbotclient.git"
   }
 }

@@ -1,14 +1,21 @@
 "use strict"; 
 
 var os = require('os');
+var TJBOT = require('tjbot');
+var hardware = ['servo'];
+var tjConfig = {
+	log: { 
+		level: 'verbose'
+	}
+}
 
 const shell = require('shelljs');
 
 var interfaces = os.networkInterfaces();
-//var config = require('./tjbot.json');
-var tjbot = {};
+
+var data = {};
 var networkKey = 'network';
-tjbot[networkKey] = [];
+data[networkKey] = [];
 
 Object.keys(interfaces).forEach(function(interfaceName) {
 	var alias = 0;
@@ -18,76 +25,70 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 		}
 		
 		if (alias >=  1) {
-			tjbot[networkKey].push(interfaceName + ':' + alias, iface.address);
+			data[networkKey].push(interfaceName + ':' + alias, iface.address);
 		} else {
-			tjbot[networkKey].push(interfaceName, iface.address);
+			data[networkKey].push(interfaceName, iface.address);
 		}
 		++alias;
 	});
 });
 
-//tjbot.name = config.name;
-//tjbot.image = config.image;
-//tjbot.chocolate = config.chocolate;
-tjbot.os_type = os.type();
-tjbot.firmware = os.release();
-tjbot.os_platform = os.platform();
-tjbot.nodejs_version = process.version;
-tjbot.npm_version = {};
-tjbot.npm_package = {};
-tjbot.cpuinfo = {};
+data.os_type = os.type();
+data.firmware = os.release();
+data.os_platform = os.platform();
+data.nodejs_version = process.version;
+data.npm_version = {};
+data.npm_package = {};
+data.cpuinfo = {};
 var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
 var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 var entry = element.split(":");
 	 if (entry.length == 2) {
-		tjbot.npm_version[entry[0].trim()] = entry[1].trim();
+		data.npm_version[entry[0].trim()] = entry[1].trim();
 	 }
 });
 
 npm_package.forEach(function(part, index) {
-	//console.log(part.split("@"));
 	var entry = part.split("@");
 	if (entry.length == 2) {
-		tjbot.npm_package[entry[0].trim()] = entry[1].trim();
+		data.npm_package[entry[0].trim()] = entry[1].trim();
 	}
 });
 
-if (tjbot.os_platform == 'linux') {
-	tjbot.os_info = shell.exec('cat /etc/os-release').split(" ");
-	tjbot.os_info.forEach(function(part, index) {
-		//console.log(part.split("="));
-		tjbot.os_info[index] = part.split("=");
+if (data.os_platform == 'linux') {
+	data.os_info = shell.exec('cat /etc/os-release').split(" ");
+	data.os_info.forEach(function(part, index) {
+		data.os_info[index] = part.split("=");
 	});
-	tjbot.hostname = shell.exec('cat /etc/hostname');
+	data.hostname = shell.exec('cat /etc/hostname');
 	var cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
 	cpuinfo.forEach(function(element) {
 		var entry = element.split(":");
 		if (entry.length == 2) {
-			tjbot.cpuinfo[entry[0].trim()] = entry[1].trim();
+			data.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
 	})
 } else {
-	tjbot.cpuinfo.Serial = "test-serial-1234";
+	data.cpuinfo.Serial = "test-serial-1234";
 }
 
-/*var script = exec('npm version', (error, stdout, stderr) => {
-	tjbot.npm_version = stdout.split(/\r?\n/);
-	tjbot.npm_version_stderr = stderr.split(/\r?\n/);
-	if (error != null) {
-		tjbot.npm_version_error = error;
-	}
-});*/
-
 console.log("Connecting to " + getURL());
-	
+
+var tj = new TJBOT(hardware, tjConfig, {});
+tj.wave();
+
 var socket = require('socket.io-client')(getURL());
 socket.on('start', function(data){
 	console.log(data);
-	socket.emit('checkin', JSON.stringify(tjbot));
+	socket.emit('checkin', JSON.stringify(data));
 });
 socket.on('event', function(data){
-	console.log('a great user event');
+	param = JSON.parse(data);
+	if(param.action == 'wave') {
+		tj.wave();
+	}
+
 });
 socket.on('disconnect', function(){
 	console.log('Socket disconnected');
@@ -107,6 +108,6 @@ socket.on('update', function(data){
 
 function getURL() {
 	//return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	//return 'http://127.0.0.1:3000';
-	return 'http://192.168.1.104:3000';
+	return 'http://127.0.0.1:3000';
+	//return 'http://192.168.1.104:3000';
 }
