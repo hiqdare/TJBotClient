@@ -3,7 +3,7 @@
 var os = require('os');
 var hardware = ['servo'];
 var tjConfig = {
-	log: { 
+	log: {
 		level: 'verbose'
 	}
 }
@@ -24,7 +24,7 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 		if ('IPv4' !== iface.family || iface.internal !== false) {
 			return;
 		}
-		
+
 		if (alias >=  1) {
 			tjdata[networkKey].push(interfaceName + ':' + alias, iface.address);
 		} else {
@@ -147,6 +147,6 @@ function getURL() {
 	} else {
 		return "http://" + argv[2] + ':3000';
 	}
-	
+
 	//return 'http://192.168.1.104:3000';
 }
