@@ -8,6 +8,8 @@ var tjConfig = {
 	}
 }
 
+var tj;
+
 const shell = require('shelljs');
 
 var interfaces = os.networkInterfaces();
@@ -76,6 +78,11 @@ if (tjdata.os_platform == 'linux') {
 var url = getURL();
 console.log("Connecting to " + url);
 
+if (tjdata.os_platform == 'linux') {
+	var TJBOT = require('tjbot');
+	tj = new TJBOT(hardware, tjConfig, {});
+}
+
 var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
@@ -83,27 +90,43 @@ socket.on('start', function(data){
 	socket.emit('checkin', JSON.stringify(tjdata));
 });
 
-if (tjdata.os_platform == 'linux') {
-	var TJBOT = require('tjbot');
-	var tj = new TJBOT(hardware, tjConfig, {});
-	tj.wave();
-
-	socket.on('event', function(data){
-		var param = JSON.parse(data);
-		console.log(param.target + " " + param.event);
-		if(param.target == 'arm') {
+socket.on('event', function(data){
+	var param = JSON.parse(data);
+	console.log(param.target + " " + param.event);
+	switch(param.target) {
+		case 'arm':
 			if (param.event == 'wave') {
-				tj.wave();
+				if (tj != null) {
+					tj.wave();
+				} else {
+					console.log("I am waving");
+				}
 			}
-		}
+			break;
+		case 'led':
+			if (param.event == 'on') {
+				tj.shine("red")
+			}
+			break;
+		case 'source':
+			shell.exec('git pull');
+			break;
+		case 'nodejs':
+			shell.exec('npm cache clean -f');
+			shell.exec('npm install -g n');
+			shell.exec('n stable');
+			break;
+		case 'npm':
+			shell.exec('npm update -g');
+			break;
+	}
+});
 
-	});
-}
 
 socket.on('disconnect', function(){
 	console.log('Socket disconnected');
 });
-
+/*
 socket.on('update', function(data){
 	if (data == 'source') {
 		shell.exec('git pull');
@@ -114,7 +137,7 @@ socket.on('update', function(data){
 	} else if (data == 'npm') {
 		shell.exec('npm update -g');
 	}
-});
+});*/
 
 function getURL() {
 	var argv = process.argv;
