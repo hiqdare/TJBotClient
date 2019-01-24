@@ -115,6 +115,51 @@ socket.on('update', function(data){
 		shell.exec('npm update -g');
 	}
 });
+socket.on('vcapServices', function(vcapServices) {
+	initializeTTS(vcapServices, function(voices) {
+		socket.emit('listOfTTSVoices', voices);
+	});
+});
+
+socket.on('ttsVoiceSelected', function (voice) {
+	console.log('Selected voice: ', voice);
+});
+
+function initializeTTS(vcapServices, callback) {
+	// Load the Cloudant library
+	let TextToSpeech = require('watson-developer-cloud/text-to-speech/v1');
+	
+		// if server is running on Bluemix get the credentials from there, otherwise hardcode it
+	if(vcapServices) {
+		textToSpeech = new TextToSpeech(
+			{
+				iam_apikey: (vcapServices.text_to_speech[0].credentials.iam_apikey),
+				url: (vcapServices.text_to_speech[0].credentials.url),
+			}
+		);
+		textToSpeech = vcapServices.textToSpeech[0].credentials;
+	} else {
+		textToSpeech = new TextToSpeech(
+			{
+				iam_apikey: 'SyA_Qu37knBNLfrgGSpsiPD93QXTeHzYSgYaDu1RfwXl',
+				url: 'https://gateway-lon.watsonplatform.net/text-to-speech/api',
+			}
+		);
+	}
+
+	textToSpeech.listVoices(null,
+		function(error, voices) {
+	  		if (error) {
+	    		console.log(error);
+	  		}
+			else {
+				callback(voices);
+	  		}
+		}
+	);
+	
+}
+
 
 function getURL() {
 	var argv = process.argv;
