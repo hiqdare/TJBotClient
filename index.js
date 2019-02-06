@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 var os = require('os');
 var hardware = ['servo'];
@@ -9,6 +9,8 @@ var tjConfig = {
 }
 
 var tj;
+
+let vcapServices = null;
 
 const shell = require('shelljs');
 
@@ -90,6 +92,10 @@ socket.on('start', function(data){
 	socket.emit('checkin', JSON.stringify(tjdata));
 });
 
+socket.on('vcapServices', function(data) {
+	vcapServices = data;
+});
+
 socket.on('event', function(data){
 	var param = JSON.parse(data);
 	console.log(param.target + " " + param.event);
@@ -119,13 +125,34 @@ socket.on('event', function(data){
 		case 'npm':
 			shell.exec('npm update -g');
 			break;
+		case 'text_to_speech':
+			tjConfig.speak = {};
+			tjConfig.speak.voice = param.config.value;
+			initializeTJ(param.config.service);
+			break;
 	}
 });
 
 
-socket.on('disconnect', function(){
-	console.log('Socket disconnected');
-});
+function initializeTJ(service, selectedOption) {
+	if (!service || !selectedOption ) {
+		console.log("err");
+	}
+
+	if (!vcapServices[service]) {
+		console.log("err");
+	}
+
+	if (tjCredentials[service].apikey && tjCredentials[service].url) {
+		tjCredentials[service] = {};
+		tjCredentials[service].apikey = vcapServices[service][0].credentials.apikey;
+		tjCredentials[service].url = vcapServices.[service][0].credentials.url;
+	}
+
+	tj = tj = new TJBOT(hardware, tjConfig, tjCredentials);
+}
+
+
 /*
 socket.on('update', function(data){
 	if (data == 'source') {
@@ -138,52 +165,6 @@ socket.on('update', function(data){
 		shell.exec('npm update -g');
 	}
 });*/
-
-socket.on('vcapServices', function(vcapServices) {
-	initializeTTS(vcapServices, function(voices) {
-		socket.emit('listOfTTSVoices', voices);
-	});
-});
-
-socket.on('ttsVoiceSelected', function (voice) {
-	console.log('Selected voice: ', voice);
-});
-
-function initializeTTS(vcapServices, callback) {
-	// Load the Cloudant library
-	let TextToSpeech = require('watson-developer-cloud/text-to-speech/v1');
-	
-		// if server is running on Bluemix get the credentials from there, otherwise hardcode it
-	if(vcapServices) {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: (vcapServices.text_to_speech[0].credentials.iam_apikey),
-				url: (vcapServices.text_to_speech[0].credentials.url),
-			}
-		);
-		textToSpeech = vcapServices.textToSpeech[0].credentials;
-	} else {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: 'SyA_Qu37knBNLfrgGSpsiPD93QXTeHzYSgYaDu1RfwXl',
-				url: 'https://gateway-lon.watsonplatform.net/text-to-speech/api',
-			}
-		);
-	}
-
-	textToSpeech.listVoices(null,
-		function(error, voices) {
-	  		if (error) {
-	    		console.log(error);
-	  		}
-			else {
-				callback(voices);
-	  		}
-		}
-	);
-	
-}
-
 
 function getURL() {
 	var argv = process.argv;
