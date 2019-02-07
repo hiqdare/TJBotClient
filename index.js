@@ -9,7 +9,6 @@
 var os = require('os');
 const shell = require('shelljs');
 var TJBOT = require('tjbot');
-var socket = require('socket.io-client')(url);
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
@@ -99,10 +98,10 @@ var url = getURL();
 console.log("Connecting to " + url);
 
 if (tjdata.os_platform == 'linux') {
-
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
+var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
