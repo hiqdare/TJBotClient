@@ -10,6 +10,8 @@ var tjConfig = {
 
 var tj;
 
+let tjCredentials = {};
+
 let vcapServices = null;
 
 const shell = require('shelljs');
@@ -85,6 +87,7 @@ if (tjdata.os_platform == 'linux') {
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
+
 var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
@@ -128,30 +131,16 @@ socket.on('event', function(data){
 		case 'text_to_speech':
 			tjConfig.speak = {};
 			tjConfig.speak.voice = param.config.value;
-			initializeTJ(param.config.service);
+
+			if (!hardware.includes('speaker')) {
+				hardware.push('speaker');
+			}
+
+			console.log('param: ', param.config.value);
+			initializeTJ(param.target);
 			break;
 	}
 });
-
-
-function initializeTJ(service, selectedOption) {
-	if (!service || !selectedOption ) {
-		console.log("err");
-	}
-
-	if (!vcapServices[service]) {
-		console.log("err");
-	}
-
-	if (tjCredentials[service].apikey && tjCredentials[service].url) {
-		tjCredentials[service] = {};
-		tjCredentials[service].apikey = vcapServices[service][0].credentials.apikey;
-		tjCredentials[service].url = vcapServices.[service][0].credentials.url;
-	}
-
-	tj = tj = new TJBOT(hardware, tjConfig, tjCredentials);
-}
-
 
 /*
 socket.on('update', function(data){
@@ -166,14 +155,37 @@ socket.on('update', function(data){
 	}
 });*/
 
+function initializeTJ(service) {
+	if (!service) {
+		console.log("err");
+	}
+
+
+	if (!vcapServices.services[service]) {
+		console.log("err");
+	}
+
+
+	if (!tjCredentials[service]) {
+		tjCredentials[service] = {};
+
+		if (!tjCredentials[service].apikey || !tjCredentials[service].url) {
+			tjCredentials[service].apikey = vcapServices.services[service][0].credentials.apikey;
+			tjCredentials[service].url = vcapServices.services[service][0].credentials.url;
+		}
+	}
+
+	tj = tj = new TJBOT(hardware, tjConfig, tjCredentials);
+}
+
 function getURL() {
-	var argv = process.argv;
+	/*var argv = process.argv;
 
 	if (argv.length < 3) {
 		return 'https://tjbotbrowser.eu-de.mybluemix.net';
 	} else {
 		return "http://" + argv[2] + ':3000';
-	}
+	} */
 
 	//return 'http://192.168.1.104:3000';
 }
