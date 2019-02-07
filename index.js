@@ -1,26 +1,42 @@
-"use strict";
+/**
+ *	index.js
+ */
+
+/*----------------------------------------------------------------------------*/
+/* IMPORTS                                                                    */
+/*----------------------------------------------------------------------------*/
 
 var os = require('os');
+const shell = require('shelljs');
+var TJBOT = require('tjbot');
+var socket = require('socket.io-client')(url);
+
+/*----------------------------------------------------------------------------*/
+/* DECLARATION AND INITIALIZATION                                             */
+/*----------------------------------------------------------------------------*/
+
 var hardware = ['servo'];
 var tjConfig = {
 	log: {
 		level: 'verbose'
 	}
 }
+let tjCredentials = {};
 
 var tj;
 
-let tjCredentials = {};
-
 let vcapServices = null;
-
-const shell = require('shelljs');
 
 var interfaces = os.networkInterfaces();
 
 var tjdata = {};
 var networkKey = 'network';
 tjdata[networkKey] = [];
+
+
+/*----------------------------------------------------------------------------*/
+/* MAIN 						                                              */
+/*----------------------------------------------------------------------------*/
 
 Object.keys(interfaces).forEach(function(interfaceName) {
 	var alias = 0;
@@ -83,12 +99,10 @@ var url = getURL();
 console.log("Connecting to " + url);
 
 if (tjdata.os_platform == 'linux') {
-	var TJBOT = require('tjbot');
+
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
-
-var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
@@ -136,7 +150,6 @@ socket.on('event', function(data){
 				hardware.push('speaker');
 			}
 
-			console.log('param: ', param.config.value);
 			initializeTJ(param.target);
 			break;
 	}
@@ -160,11 +173,9 @@ function initializeTJ(service) {
 		console.log("err");
 	}
 
-
 	if (!vcapServices.services[service]) {
 		console.log("err");
 	}
-
 
 	if (!tjCredentials[service]) {
 		tjCredentials[service] = {};
@@ -175,17 +186,20 @@ function initializeTJ(service) {
 		}
 	}
 
-	tj = tj = new TJBOT(hardware, tjConfig, tjCredentials);
+	tj = new TJBOT(hardware, tjConfig, tjCredentials);
 }
 
 function getURL() {
-	/*var argv = process.argv;
+	var argv = process.argv;
 
 	if (argv.length < 3) {
 		return 'https://tjbotbrowser.eu-de.mybluemix.net';
 	} else {
 		return "http://" + argv[2] + ':3000';
-	} */
-
+	}
 	//return 'http://192.168.1.104:3000';
 }
+
+/*----------------------------------------------------------------------------*/
+/* EXPORTS                                                                    */
+/*----------------------------------------------------------------------------*/
