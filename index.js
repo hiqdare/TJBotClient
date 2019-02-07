@@ -1,22 +1,42 @@
-"use strict"; 
+/**
+ *	index.js
+ */
+
+/*----------------------------------------------------------------------------*/
+/* IMPORTS                                                                    */
+/*----------------------------------------------------------------------------*/
 
 var os = require('os');
+const shell = require('shelljs');
+var TJBOT = require('tjbot');
+var socket = require('socket.io-client')(url);
+
+/*----------------------------------------------------------------------------*/
+/* DECLARATION AND INITIALIZATION                                             */
+/*----------------------------------------------------------------------------*/
+
 var hardware = ['servo'];
 var tjConfig = {
 	log: {
 		level: 'verbose'
 	}
 }
+let tjCredentials = {};
 
 var tj;
 
-const shell = require('shelljs');
+let vcapServices = null;
 
 var interfaces = os.networkInterfaces();
 
 var tjdata = {};
 var networkKey = 'network';
 tjdata[networkKey] = [];
+
+
+/*----------------------------------------------------------------------------*/
+/* MAIN 						                                              */
+/*----------------------------------------------------------------------------*/
 
 Object.keys(interfaces).forEach(function(interfaceName) {
 	var alias = 0;
@@ -79,15 +99,18 @@ var url = getURL();
 console.log("Connecting to " + url);
 
 if (tjdata.os_platform == 'linux') {
-	var TJBOT = require('tjbot');
+
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
-var socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
 	socket.emit('checkin', JSON.stringify(tjdata));
+});
+
+socket.on('vcapServices', function(data) {
+	vcapServices = data;
 });
 
 socket.on('event', function(data){
@@ -119,13 +142,19 @@ socket.on('event', function(data){
 		case 'npm':
 			shell.exec('npm update -g');
 			break;
+		case 'text_to_speech':
+			tjConfig.speak = {};
+			tjConfig.speak.voice = param.config.value;
+
+			if (!hardware.includes('speaker')) {
+				hardware.push('speaker');
+			}
+
+			initializeTJ(param.target);
+			break;
 	}
 });
 
-
-socket.on('disconnect', function(){
-	console.log('Socket disconnected');
-});
 /*
 socket.on('update', function(data){
 	if (data == 'source') {
@@ -139,51 +168,26 @@ socket.on('update', function(data){
 	}
 });*/
 
-socket.on('vcapServices', function(vcapServices) {
-	initializeTTS(vcapServices, function(voices) {
-		socket.emit('listOfTTSVoices', voices);
-	});
-});
-
-socket.on('ttsVoiceSelected', function (voice) {
-	console.log('Selected voice: ', voice);
-});
-
-function initializeTTS(vcapServices, callback) {
-	// Load the Cloudant library
-	let TextToSpeech = require('watson-developer-cloud/text-to-speech/v1');
-	
-		// if server is running on Bluemix get the credentials from there, otherwise hardcode it
-	if(vcapServices) {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: (vcapServices.text_to_speech[0].credentials.iam_apikey),
-				url: (vcapServices.text_to_speech[0].credentials.url),
-			}
-		);
-		textToSpeech = vcapServices.textToSpeech[0].credentials;
-	} else {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: 'SyA_Qu37knBNLfrgGSpsiPD93QXTeHzYSgYaDu1RfwXl',
-				url: 'https://gateway-lon.watsonplatform.net/text-to-speech/api',
-			}
-		);
+function initializeTJ(service) {
+	if (!service) {
+		console.log("err");
 	}
 
-	textToSpeech.listVoices(null,
-		function(error, voices) {
-	  		if (error) {
-	    		console.log(error);
-	  		}
-			else {
-				callback(voices);
-	  		}
-		}
-	);
-	
-}
+	if (!vcapServices.services[service]) {
+		console.log("err");
+	}
 
+	if (!tjCredentials[service]) {
+		tjCredentials[service] = {};
+
+		if (!tjCredentials[service].apikey || !tjCredentials[service].url) {
+			tjCredentials[service].apikey = vcapServices.services[service][0].credentials.apikey;
+			tjCredentials[service].url = vcapServices.services[service][0].credentials.url;
+		}
+	}
+
+	tj = new TJBOT(hardware, tjConfig, tjCredentials);
+}
 
 function getURL() {
 	var argv = process.argv;
@@ -193,6 +197,9 @@ function getURL() {
 	} else {
 		return "http://" + argv[2] + ':3000';
 	}
-
 	//return 'http://192.168.1.104:3000';
 }
+
+/*----------------------------------------------------------------------------*/
+/* EXPORTS                                                                    */
+/*----------------------------------------------------------------------------*/

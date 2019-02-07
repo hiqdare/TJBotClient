@@ -1,7 +1,7 @@
 {
   "name": "tjbotclient",
   "description": "TJBot client, running locally to connect with TJBotBrowser on the cloud",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "author": "Henrique Säuberli sae@zurich.ibm.com",
   "main": "index.js",
   "scripts": {
