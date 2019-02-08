@@ -32,6 +32,41 @@ var tjdata = {};
 var networkKey = 'network';
 tjdata[networkKey] = [];
 
+/*----------------------------------------------------------------------------*/
+/* PRIVATE FUNCTION				                                              */
+/*----------------------------------------------------------------------------*/
+
+function initializeTJ(service) {
+	if (!service) {
+		console.log("err");
+	}
+
+	if (!vcapServices[service]) {
+		console.log("err");
+	}
+
+	if (!tjCredentials[service]) {
+		tjCredentials[service] = {};
+
+		if (!tjCredentials[service].apikey || !tjCredentials[service].url) {
+			tjCredentials[service].apikey = vcapServices[service][0].credentials.apikey;
+			tjCredentials[service].url = vcapServices[service][0].credentials.url;
+		}
+	}
+
+	tj = new TJBOT(hardware, tjConfig, tjCredentials);
+}
+
+function getURL() {
+	var argv = process.argv;
+
+	if (argv.length < 3) {
+		return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	} else {
+		return "http://" + argv[2] + ':3000';
+	}
+	//return 'http://192.168.1.104:3000';
+}
 
 /*----------------------------------------------------------------------------*/
 /* MAIN 						                                              */
@@ -167,37 +202,7 @@ socket.on('update', function(data){
 	}
 });*/
 
-function initializeTJ(service) {
-	if (!service) {
-		console.log("err");
-	}
 
-	if (!vcapServices.services[service]) {
-		console.log("err");
-	}
-
-	if (!tjCredentials[service]) {
-		tjCredentials[service] = {};
-
-		if (!tjCredentials[service].apikey || !tjCredentials[service].url) {
-			tjCredentials[service].apikey = vcapServices.services[service][0].credentials.apikey;
-			tjCredentials[service].url = vcapServices.services[service][0].credentials.url;
-		}
-	}
-
-	tj = new TJBOT(hardware, tjConfig, tjCredentials);
-}
-
-function getURL() {
-	var argv = process.argv;
-
-	if (argv.length < 3) {
-		return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	} else {
-		return "http://" + argv[2] + ':3000';
-	}
-	//return 'http://192.168.1.104:3000';
-}
 
 /*----------------------------------------------------------------------------*/
 /* EXPORTS                                                                    */
