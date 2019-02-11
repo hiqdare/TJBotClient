@@ -35,6 +35,24 @@ tjdata[networkKey] = [];
 /*----------------------------------------------------------------------------*/
 /* PRIVATE FUNCTION				                                              */
 /*----------------------------------------------------------------------------*/
+function configureService(service, config) {
+	switch (service) {
+		case 'text_to_speech':
+
+			if (!tjConfig.hasOwnProperty(speak)) {
+				tjConfig.speak = {};
+			}
+			tjConfig.speak.voice = config;
+
+			if (!hardware.includes('speaker')) {
+				hardware.push('speaker');
+			}
+
+			initializeTJ(service);
+			break;
+	}
+}
+
 
 function initializeTJ(service) {
 	if (!service) {
@@ -147,6 +165,14 @@ socket.on('vcapServices', function(data) {
 	vcapServices = data;
 });
 
+socket.on('config', function(data) {
+	let param = JSON.parse(data);
+
+	Object.keys(param).forEach(function(service) {
+		configureService(service, param[service]);
+	});
+});
+
 socket.on('event', function(data){
 	var param = JSON.parse(data);
 	console.log(param.target + " " + param.event);
@@ -176,15 +202,8 @@ socket.on('event', function(data){
 		case 'npm':
 			shell.exec('npm update -g');
 			break;
-		case 'text_to_speech':
-			tjConfig.speak = {};
-			tjConfig.speak.voice = param.config.value;
-
-			if (!hardware.includes('speaker')) {
-				hardware.push('speaker');
-			}
-
-			initializeTJ(param.target);
+		case 'service':
+			configureService(param.config.service, param.config.value);
 			break;
 	}
 });
@@ -201,9 +220,3 @@ socket.on('update', function(data){
 		shell.exec('npm update -g');
 	}
 });*/
-
-
-
-/*----------------------------------------------------------------------------*/
-/* EXPORTS                                                                    */
-/*----------------------------------------------------------------------------*/
