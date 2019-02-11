@@ -39,7 +39,7 @@ function configureService(service, config) {
 	switch (service) {
 		case 'text_to_speech':
 
-			if (!tjConfig.hasOwnProperty(speak)) {
+			if (!tjConfig.hasOwnProperty('speak')) {
 				tjConfig.speak = {};
 			}
 			tjConfig.speak.voice = config;
