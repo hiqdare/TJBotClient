@@ -6,35 +6,41 @@
 /* IMPORTS                                                                    */
 /*----------------------------------------------------------------------------*/
 
-var os = require('os');
+let os = require('os');
 const shell = require('shelljs');
-var TJBOT = require('tjbot');
+let TJBOT = require('tjbot');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
 /*----------------------------------------------------------------------------*/
 
-var hardware = ['servo'];
-var tjConfig = {
+let hardware = ['servo'];
+let tjConfig = {
 	log: {
 		level: 'verbose'
 	}
 }
 let tjCredentials = {};
 
-var tj;
+let tj;
 
 let vcapServices = null;
 
-var interfaces = os.networkInterfaces();
+let interfaces = os.networkInterfaces();
 
-var tjdata = {};
-var networkKey = 'network';
+let tjdata = {};
+let networkKey = 'network';
 tjdata[networkKey] = [];
 
 /*----------------------------------------------------------------------------*/
 /* PRIVATE FUNCTION				                                              */
 /*----------------------------------------------------------------------------*/
+
+/**
+ * configures watson service
+ * @param {string} service
+ * @param {string} config
+ */
 function configureService(service, config) {
 	switch (service) {
 		case 'text_to_speech':
@@ -53,7 +59,12 @@ function configureService(service, config) {
 	}
 }
 
-
+/**
+ * configures credentials
+ * initialize tjbot libary
+ * @param {string} service
+ * @param {string} config
+ */
 function initializeTJ(service) {
 	if (!service) {
 		console.log("err");
@@ -75,8 +86,11 @@ function initializeTJ(service) {
 	tj = new TJBOT(hardware, tjConfig, tjCredentials);
 }
 
+/**
+ * gets URL from TJBotBrowser
+ */
 function getURL() {
-	var argv = process.argv;
+	let argv = process.argv;
 
 	if (argv.length < 3) {
 		return 'https://tjbotbrowser.eu-de.mybluemix.net';
@@ -91,7 +105,7 @@ function getURL() {
 /*----------------------------------------------------------------------------*/
 
 Object.keys(interfaces).forEach(function(interfaceName) {
-	var alias = 0;
+	let alias = 0;
 	interfaces[interfaceName].forEach(function(iface) {
 		if ('IPv4' !== iface.family || iface.internal !== false) {
 			return;
@@ -113,17 +127,17 @@ tjdata.nodejs_version = process.version;
 tjdata.npm_version = {};
 tjdata.npm_package = {};
 tjdata.cpuinfo = {};
-var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
-var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+let npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
+let npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
-	 var entry = element.split(":");
+	 let entry = element.split(":");
 	 if (entry.length == 2) {
 		tjdata.npm_version[entry[0].trim()] = entry[1].trim();
 	 }
 });
 
 npm_package.forEach(function(part) {
-	var entry = part.split("@");
+	let entry = part.split("@");
 	if (entry.length == 2) {
 		tjdata.npm_package[entry[0].trim()] = entry[1].trim();
 	}
@@ -135,9 +149,9 @@ if (tjdata.os_platform == 'linux') {
 		tjdata.os_info[index] = part.split("=");
 	});
 	tjdata.hostname = shell.exec('cat /etc/hostname');
-	var cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
+	let cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
 	cpuinfo.forEach(function(element) {
-		var entry = element.split(":");
+		let entry = element.split(":");
 		if (entry.length == 2) {
 			tjdata.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
@@ -147,14 +161,14 @@ if (tjdata.os_platform == 'linux') {
 	tjdata.cpuinfo.Serial = "test-serial-1234";
 }
 
-var url = getURL();
+let url = getURL();
 console.log("Connecting to " + url);
 
 if (tjdata.os_platform == 'linux') {
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
-var socket = require('socket.io-client')(url);
+let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
@@ -174,7 +188,7 @@ socket.on('config', function(data) {
 });
 
 socket.on('event', function(data){
-	var param = JSON.parse(data);
+	let param = JSON.parse(data);
 	console.log(param.target + " " + param.event);
 	switch(param.target) {
 		case 'arm':
