@@ -104,9 +104,7 @@ socket.on('event', function(data){
 			}
 			break;
 		case 'led':
-			if (param.event == 'on') {
-				tj.shine("red")
-			}
+			tj.shine(param.event)
 			break;
 		case 'source':
 			shell.exec('git pull');
