@@ -1,25 +1,111 @@
-"use strict"; 
+/**
+ *	index.js
+ */
 
-var os = require('os');
-var hardware = ['servo'];
-var tjConfig = {
+/*----------------------------------------------------------------------------*/
+/* IMPORTS                                                                    */
+/*----------------------------------------------------------------------------*/
+
+let os = require('os');
+const shell = require('shelljs');
+let TJBOT = require('tjbot');
+
+/*----------------------------------------------------------------------------*/
+/* DECLARATION AND INITIALIZATION                                             */
+/*----------------------------------------------------------------------------*/
+
+let hardware = ['servo'];
+let tjConfig = {
 	log: {
 		level: 'verbose'
 	}
 }
+let tjCredentials = {};
 
-var tj;
+let tj;
 
-const shell = require('shelljs');
+let vcapServices = null;
 
-var interfaces = os.networkInterfaces();
+let interfaces = os.networkInterfaces();
 
-var tjdata = {};
-var networkKey = 'network';
+let tjdata = {};
+let networkKey = 'network';
 tjdata[networkKey] = [];
 
+/*----------------------------------------------------------------------------*/
+/* PRIVATE FUNCTION				                                              */
+/*----------------------------------------------------------------------------*/
+
+/**
+ * configures watson service
+ * @param {string} service
+ * @param {string} config
+ */
+function configureService(service, config) {
+	switch (service) {
+		case 'text_to_speech':
+
+			if (!tjConfig.hasOwnProperty('speak')) {
+				tjConfig.speak = {};
+			}
+			tjConfig.speak.voice = config;
+
+			if (!hardware.includes('speaker')) {
+				hardware.push('speaker');
+			}
+
+			initializeTJ(service);
+			break;
+	}
+}
+
+/**
+ * configures credentials
+ * initialize tjbot libary
+ * @param {string} service
+ * @param {string} config
+ */
+function initializeTJ(service) {
+	if (!service) {
+		console.log("err");
+	}
+
+	if (!vcapServices[service]) {
+		console.log("err");
+	}
+
+	if (!tjCredentials[service]) {
+		tjCredentials[service] = {};
+
+		if (!tjCredentials[service].apikey || !tjCredentials[service].url) {
+			tjCredentials[service].apikey = vcapServices[service][0].credentials.apikey;
+			tjCredentials[service].url = vcapServices[service][0].credentials.url;
+		}
+	}
+
+	tj = new TJBOT(hardware, tjConfig, tjCredentials);
+}
+
+/**
+ * gets URL from TJBotBrowser
+ */
+function getURL() {
+	let argv = process.argv;
+
+	if (argv.length < 3) {
+		return 'https://tjbotbrowser.eu-de.mybluemix.net';
+	} else {
+		return "http://" + argv[2] + ':3000';
+	}
+	//return 'http://192.168.1.104:3000';
+}
+
+/*----------------------------------------------------------------------------*/
+/* MAIN 						                                              */
+/*----------------------------------------------------------------------------*/
+
 Object.keys(interfaces).forEach(function(interfaceName) {
-	var alias = 0;
+	let alias = 0;
 	interfaces[interfaceName].forEach(function(iface) {
 		if ('IPv4' !== iface.family || iface.internal !== false) {
 			return;
@@ -41,17 +127,17 @@ tjdata.nodejs_version = process.version;
 tjdata.npm_version = {};
 tjdata.npm_package = {};
 tjdata.cpuinfo = {};
-var npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
-var npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+let npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
+let npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
-	 var entry = element.split(":");
+	 let entry = element.split(":");
 	 if (entry.length == 2) {
 		tjdata.npm_version[entry[0].trim()] = entry[1].trim();
 	 }
 });
 
 npm_package.forEach(function(part) {
-	var entry = part.split("@");
+	let entry = part.split("@");
 	if (entry.length == 2) {
 		tjdata.npm_package[entry[0].trim()] = entry[1].trim();
 	}
@@ -63,9 +149,9 @@ if (tjdata.os_platform == 'linux') {
 		tjdata.os_info[index] = part.split("=");
 	});
 	tjdata.hostname = shell.exec('cat /etc/hostname');
-	var cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
+	let cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
 	cpuinfo.forEach(function(element) {
-		var entry = element.split(":");
+		let entry = element.split(":");
 		if (entry.length == 2) {
 			tjdata.cpuinfo[entry[0].trim()] = entry[1].trim();
 		}
@@ -75,23 +161,34 @@ if (tjdata.os_platform == 'linux') {
 	tjdata.cpuinfo.Serial = "test-serial-1234";
 }
 
-var url = getURL();
+let url = getURL();
 console.log("Connecting to " + url);
 
 if (tjdata.os_platform == 'linux') {
-	var TJBOT = require('tjbot');
 	tj = new TJBOT(hardware, tjConfig, {});
 }
 
-var socket = require('socket.io-client')(url);
+let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
 	socket.emit('checkin', JSON.stringify(tjdata));
 });
 
+socket.on('vcapServices', function(data) {
+	vcapServices = data;
+});
+
+socket.on('config', function(data) {
+	let param = JSON.parse(data);
+
+	Object.keys(param).forEach(function(service) {
+		configureService(service, param[service]);
+	});
+});
+
 socket.on('event', function(data){
-	var param = JSON.parse(data);
+	let param = JSON.parse(data);
 	console.log(param.target + " " + param.event);
 	switch(param.target) {
 		case 'arm':
@@ -117,13 +214,12 @@ socket.on('event', function(data){
 		case 'npm':
 			shell.exec('npm update -g');
 			break;
+		case 'service':
+			configureService(param.config.service, param.config.value);
+			break;
 	}
 });
 
-
-socket.on('disconnect', function(){
-	console.log('Socket disconnected');
-});
 /*
 socket.on('update', function(data){
 	if (data == 'source') {
@@ -136,61 +232,3 @@ socket.on('update', function(data){
 		shell.exec('npm update -g');
 	}
 });*/
-
-socket.on('vcapServices', function(vcapServices) {
-	initializeTTS(vcapServices, function(voices) {
-		socket.emit('listOfTTSVoices', voices);
-	});
-});
-
-socket.on('ttsVoiceSelected', function (voice) {
-	console.log('Selected voice: ', voice);
-});
-
-function initializeTTS(vcapServices, callback) {
-	// Load the Cloudant library
-	let TextToSpeech = require('watson-developer-cloud/text-to-speech/v1');
-	
-		// if server is running on Bluemix get the credentials from there, otherwise hardcode it
-	if(vcapServices) {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: (vcapServices.text_to_speech[0].credentials.iam_apikey),
-				url: (vcapServices.text_to_speech[0].credentials.url),
-			}
-		);
-		textToSpeech = vcapServices.textToSpeech[0].credentials;
-	} else {
-		textToSpeech = new TextToSpeech(
-			{
-				iam_apikey: 'SyA_Qu37knBNLfrgGSpsiPD93QXTeHzYSgYaDu1RfwXl',
-				url: 'https://gateway-lon.watsonplatform.net/text-to-speech/api',
-			}
-		);
-	}
-
-	textToSpeech.listVoices(null,
-		function(error, voices) {
-	  		if (error) {
-	    		console.log(error);
-	  		}
-			else {
-				callback(voices);
-	  		}
-		}
-	);
-	
-}
-
-
-function getURL() {
-	var argv = process.argv;
-
-	if (argv.length < 3) {
-		return 'https://tjbotbrowser.eu-de.mybluemix.net';
-	} else {
-		return "http://" + argv[2] + ':3000';
-	}
-
-	//return 'http://192.168.1.104:3000';
-}
