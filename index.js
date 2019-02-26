@@ -112,21 +112,22 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 		}
 
 		if (alias >=  1) {
-			tjdata[networkKey].push(interfaceName + ':' + alias, iface.address);
+			tjdata.networkKey.push(interfaceName + ':' + alias, iface.address);
 		} else {
-			tjdata[networkKey].push(interfaceName, iface.address);
+			tjdata.networkKey.push(interfaceName, iface.address);
 		}
 		++alias;
 	});
 });
 
 tjdata.os_type = os.type();
-tjdata.firmware = os.release();
+tjdata.os_release = os.release();
 tjdata.os_platform = os.platform();
 tjdata.nodejs_version = process.version;
 tjdata.npm_version = {};
 tjdata.npm_package = {};
 tjdata.cpuinfo = {};
+tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version').split(/\r?\n/);
 let npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
 let npm_package = shell.exec('npm list -g --depth 0').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
@@ -205,18 +206,19 @@ socket.on('event', function(data){
 			break;
 		case 'source':
 			shell.exec('git pull');
-			shell.exec('npm update pull');
+			shell.exec('npm update');
 			break;
 		case 'nodejs':
-			shell.exec('npm cache clean -f');
-			shell.exec('npm install -g n');
-			shell.exec('n stable');
+			shell.exec('npm cache clean -f;npm install -g n;n stable');
 			break;
 		case 'npm':
 			shell.exec('npm update -g');
 			break;
 		case 'nodemon':
 			shell.exec('npm i -g nodemon');
+			break;
+		case 'firmware':
+			shell.exec('sudo apt-get update; sudo apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
 			break;
 		case 'service':
 			configureService(param.config.service, param.config.value);
