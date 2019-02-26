@@ -128,7 +128,7 @@ tjdata.npm_version = {};
 tjdata.npm_package = {};
 tjdata.cpuinfo = {};
 let npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
-let npm_package = shell.exec('npm list').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+let npm_package = shell.exec('npm list -g --depth 0').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 let entry = element.split(":");
 	 if (entry.length == 2) {
@@ -205,6 +205,7 @@ socket.on('event', function(data){
 			break;
 		case 'source':
 			shell.exec('git pull');
+			shell.exec('npm update pull');
 			break;
 		case 'nodejs':
 			shell.exec('npm cache clean -f');
@@ -213,6 +214,9 @@ socket.on('event', function(data){
 			break;
 		case 'npm':
 			shell.exec('npm update -g');
+			break;
+		case 'nodemon':
+			shell.exec('npm i -g nodemon');
 			break;
 		case 'service':
 			configureService(param.config.service, param.config.value);
