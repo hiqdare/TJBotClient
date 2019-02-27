@@ -221,7 +221,7 @@ socket.on('event', function(data){
 		case 'nodejs':
 			shellexec('npm cache clean -f');
 			shellexec('npm install -g n');
-			shellexec('n 10.15.1');
+			shellexec('n 9.11.2');
 			shellexec('rs');
 			break;
 		case 'npm':
