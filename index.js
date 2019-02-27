@@ -6,9 +6,10 @@
 /* IMPORTS                                                                    */
 /*----------------------------------------------------------------------------*/
 
-let os = require('os');
+const os = require('os');
 const shell = require('shelljs');
 let TJBOT = require('tjbot');
+
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
@@ -112,9 +113,9 @@ Object.keys(interfaces).forEach(function(interfaceName) {
 		}
 
 		if (alias >=  1) {
-			tjdata.networkKey.push(interfaceName + ':' + alias, iface.address);
+			tjdata[networkKey].push(interfaceName + ':' + alias, iface.address);
 		} else {
-			tjdata.networkKey.push(interfaceName, iface.address);
+			tjdata[networkKey].push(interfaceName, iface.address);
 		}
 		++alias;
 	});
@@ -127,9 +128,9 @@ tjdata.nodejs_version = process.version;
 tjdata.npm_version = {};
 tjdata.npm_package = {};
 tjdata.cpuinfo = {};
-tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version').split(/\r?\n/);
-let npm_version = shell.exec('npm version').replace(/[\'{}]/g, "").split(",");
-let npm_package = shell.exec('npm list -g --depth 0').replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
+let npm_version = shell.exec('npm version', {silent:true}).replace(/[\'{}]/g, "").split(",");
+let npm_package = shell.exec('npm list -g --depth 0', {silent:true}).replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 let entry = element.split(":");
 	 if (entry.length == 2) {
@@ -145,12 +146,12 @@ npm_package.forEach(function(part) {
 });
 
 if (tjdata.os_platform == 'linux') {
-	tjdata.os_info = shell.exec('cat /etc/os-release').split(" ");
+	tjdata.os_info = shell.cat('/etc/os-release').split(" ");
 	tjdata.os_info.forEach(function(part, index) {
 		tjdata.os_info[index] = part.split("=");
 	});
-	tjdata.hostname = shell.exec('cat /etc/hostname');
-	let cpuinfo = shell.exec('cat /proc/cpuinfo').split(/\r?\n/);
+	tjdata.hostname = shell.cat('/etc/hostname');
+	let cpuinfo = shell.cat('/proc/cpuinfo').split(/\r?\n/);
 	cpuinfo.forEach(function(element) {
 		let entry = element.split(":");
 		if (entry.length == 2) {
@@ -190,7 +191,7 @@ socket.on('config', function(data) {
 
 socket.on('event', function(data){
 	let param = JSON.parse(data);
-	console.log(param.target + " " + param.event);
+	console.log(param.target);
 	switch(param.target) {
 		case 'arm':
 			if (param.event == 'wave') {
@@ -205,20 +206,32 @@ socket.on('event', function(data){
 			tj.shine(param.event)
 			break;
 		case 'source':
+			console.log("exec git pull");
 			shell.exec('git pull');
-			shell.exec('npm update');
+			console.log("exec npm install");
+			shell.exec('npm install');
 			break;
 		case 'nodejs':
-			shell.exec('npm cache clean -f;npm install -g n;n stable');
+			console.log("exec npm cache clean -f");
+			shell.exec('npm cache clean -f');
+			console.log("exec npm install -g n");
+			shell.exec('npm install -g n');
+			console.log("exec n stable");
+			shell.exec('n stable');
 			break;
 		case 'npm':
+			console.log("exec npm update -g");
 			shell.exec('npm update -g');
 			break;
 		case 'nodemon':
+			console.log("exec npm i -g nodemon");
 			shell.exec('npm i -g nodemon');
 			break;
 		case 'firmware':
-			shell.exec('sudo apt-get update; sudo apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
+			console.log("exec apt-get update");
+			shell.exec('apt-get update');
+			console.log("exec apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel");
+			shell.exec('apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
 			break;
 		case 'service':
 			configureService(param.config.service, param.config.value);
