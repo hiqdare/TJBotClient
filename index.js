@@ -15,7 +15,7 @@ let TJBOT = require('tjbot');
 /* DECLARATION AND INITIALIZATION                                             */
 /*----------------------------------------------------------------------------*/
 
-let hardware = ['servo'];
+let hardware = ['servo', 'led'];
 let tjConfig = {
 	log: {
 		level: 'verbose'
@@ -58,6 +58,15 @@ function configureService(service, config) {
 			initializeTJ(service);
 			break;
 	}
+}
+
+/**
+ * run shell command and print executed command
+ * @param {string} command
+ */
+function shellexec(command) {
+	console.log("exec " + command);
+	shell.exec(command);
 }
 
 /**
@@ -130,7 +139,7 @@ tjdata.npm_package = {};
 tjdata.cpuinfo = {};
 tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
 let npm_version = shell.exec('npm version', {silent:true}).replace(/[\'{}]/g, "").split(",");
-let npm_package = shell.exec('npm list -g --depth 0', {silent:true}).replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
+let npm_package = shell.exec('npm list -g --depth 1', {silent:true}).replace(/[\-└┬─├│]/g, "").split(/\r?\n/);
 npm_version.forEach(function(element) {
 	 let entry = element.split(":");
 	 if (entry.length == 2) {
@@ -206,32 +215,27 @@ socket.on('event', function(data){
 			tj.shine(param.event)
 			break;
 		case 'source':
-			console.log("exec git pull");
-			shell.exec('git pull');
-			console.log("exec npm install");
-			shell.exec('npm install');
+			shellexec('git pull');
+			shellexec('npm install');
 			break;
 		case 'nodejs':
-			console.log("exec npm cache clean -f");
-			shell.exec('npm cache clean -f');
-			console.log("exec npm install -g n");
-			shell.exec('npm install -g n');
-			console.log("exec n stable");
-			shell.exec('n stable');
+			shellexec('npm cache clean -f');
+			shellexec('npm install -g n');
+			shellexec('n 10.15.1');
+			shellexec('rs');
 			break;
 		case 'npm':
-			console.log("exec npm update -g");
-			shell.exec('npm update -g');
+			shellexec('npm update -g');
+			shellexec('rs');
 			break;
 		case 'nodemon':
-			console.log("exec npm i -g nodemon");
-			shell.exec('npm i -g nodemon');
+			shellexec('npm i -g nodemon');
+			shellexec('rs');
 			break;
 		case 'firmware':
-			console.log("exec apt-get update");
-			shell.exec('apt-get update');
-			console.log("exec apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel");
-			shell.exec('apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
+			shellexec('apt-get update');
+			shellexec('apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
+			shellexec('rs');
 			break;
 		case 'service':
 			configureService(param.config.service, param.config.value);
