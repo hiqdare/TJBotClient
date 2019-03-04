@@ -15,7 +15,7 @@ let TJBOT = require('tjbot');
 /* DECLARATION AND INITIALIZATION                                             */
 /*----------------------------------------------------------------------------*/
 
-let hardware = ['servo', 'led'];
+let hardware = ['servo', 'led', 'microphone', 'speaker'];
 let tjConfig = {
 	log: {
 		level: 'verbose'
@@ -53,6 +53,19 @@ function configureService(service, config) {
 
 			if (!hardware.includes('speaker')) {
 				hardware.push('speaker');
+			}
+
+			initializeTJ(service);
+			break;
+		case 'speech_to_text':
+	
+			if (!tjConfig.hasOwnProperty('listen')) {
+				tjConfig.listen = {};
+			}
+			tjConfig.listen.language = config;
+
+			if (!hardware.includes('microphone')) {
+				hardware.push('microphone');
 			}
 
 			initializeTJ(service);
@@ -238,7 +251,16 @@ socket.on('event', function(data){
 			shellexec('rs');
 			break;
 		case 'service':
-			configureService(param.config.service, param.config.value);
+			configureService(param.config.field, param.config.value);
+			break;
+		case 'microphone':
+			if (param.event == "on") {
+				tj.listen(function(msg) {
+					tj.speak(msg);
+				});
+			} else {
+				tj.stopListening();
+			}
 			break;
 	}
 });
