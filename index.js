@@ -255,9 +255,14 @@ socket.on('event', function(data){
 			break;
 		case 'microphone':
 			if (param.event == "on") {
-				tj.listen(function(msg) {
-					tj.speak(msg);
-				});
+				if (tj != null && tjConfig.listen != null && tjConfig.listen.language != null ) {
+					tj.listen(function(msg) {
+						socket.emit('listen', msg)
+						if (tjConfig.speak != null && tjConfig.speak.voice != null) {
+							tj.speak(msg);
+						}
+					});
+				}
 			} else {
 				tj.stopListening();
 			}
