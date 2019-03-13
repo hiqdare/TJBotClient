@@ -59,7 +59,6 @@ class TJBotInfo {
 
 	setConfiguration(config) {
 		this.configureService(config);
-		this.tj = new TJBOT(hardware, this.config, {});
 	}
 
 	/**
@@ -192,6 +191,9 @@ class TJBotInfo {
 
 			this.setCredentials(service, configList[service]);
 		}
+
+		this.tj = new TJBOT(hardware, this.config, this.credentials);
+		console.log("TJBot instance created");
 	}
 
 
@@ -212,7 +214,9 @@ class TJBotInfo {
 				}
 				break;
 			case 'led':
-				this.tj.shine(param.action)
+				if (this.tj != null) {
+					this.tj.shine(param.action)
+				}
 				break;
 			case 'source':
 				shellexec('git pull');
