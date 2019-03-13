@@ -245,6 +245,7 @@ class TJBotInfo {
 				this.configureService(param.config);
 				break;
 			case 'microphone':
+				console.log(param.action);
 				if (param.action == "on") {
 					console.log("Mic ON");
 					if (this.config.listen != null && this.config.listen.language != null ) {
@@ -262,7 +263,7 @@ class TJBotInfo {
 						console.log("language is null");
 					}
 				} else {
-					tj.stopListening();
+					this.tj.stopListening();
 				}
 				break;
 		}
