@@ -149,11 +149,7 @@ class TJBotInfo {
 			console.log("err");
 		}
 
-		if (!this.vcapServices[service]) {
-			console.log("err");
-		}
-
-		if (!this.credentials[service]) {
+		/*if (!this.credentials[service]) {
 			this.credentials[service] = {};
 
 			if (!this.credentials[service].apikey || !this.credentials[service].url) {
@@ -162,7 +158,7 @@ class TJBotInfo {
 			}
 		}
 
-		this.tj = new TJBOT(hardware, this.config, this.credentials);
+		this.tj = new TJBOT(hardware, this.config, this.credentials);*/
 	}
 
 
