@@ -53,7 +53,7 @@ class TJBotInfo {
 	}
 
 	getData() {
-		return tjdata;
+		return this.tjdata;
 	}
 
 	setConfiguration(config) {
