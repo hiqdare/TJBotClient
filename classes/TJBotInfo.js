@@ -27,7 +27,7 @@ class TJBotInfo {
 	 *
 	 * @constructor
 	 */
-	constructor(config) {
+	constructor() {
 		this.tjdata = {};
 		this.tjdata.os_type = os.type();
 		this.tjdata.os_release = os.release();
@@ -47,10 +47,17 @@ class TJBotInfo {
 			this.tjdata.hostname = shell.cat('/etc/hostname');
 			this.tjdata.os_info = this.getOSInfo();
 			this.tjdata.cpuinfo = this.getCPUInfo();
-			this.tj = new TJBOT(hardware, tjConfig, {});
 		} else {
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
 		}
+	}
+
+	getData() {
+		return tjdata;
+	}
+
+	setConfiguration(config) {
+		this.tj = new TJBOT(hardware, tjConfig, {});
 	}
 
 	/**

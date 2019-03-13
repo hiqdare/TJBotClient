@@ -46,13 +46,13 @@ let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
-	socket.emit('checkin', JSON.stringify(tjdata));
+	tj = new TJBotInfo();
+	socket.emit('checkin', JSON.stringify(tj.getData()));
 });
 
 socket.on('config', function(data) {
 	let param = JSON.parse(data);
-
-	tj = new TJBotInfo(param);
+	tj.setConfiguration(config)
 });
 
 socket.on('event', function(data){
