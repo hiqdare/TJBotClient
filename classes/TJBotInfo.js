@@ -109,8 +109,8 @@ class TJBotInfo {
 	 */
 	getOSInfo() {
 		let osInfo = {};
-		for (let part, index of shell.cat('/etc/os-release').split(" ")) {
-			osInfo[index] = part.split("=");
+		for (let part of shell.cat('/etc/os-release').split(" ")) {
+			osInfo.push(part.split("="));
 		}
 		return osInfo;
 	}
