@@ -51,7 +51,6 @@ socket.on('start', function(data){
 });
 
 socket.on('config', function(data) {
-	console.log(data)
 	let config = JSON.parse(data);
 	tj.setConfiguration(config)
 });

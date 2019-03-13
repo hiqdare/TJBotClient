@@ -58,6 +58,7 @@ class TJBotInfo {
 
 	setConfiguration(config) {
 		console.log(config);
+		this.configureService(config);
 		this.tj = new TJBOT(hardware, this.config, {});
 	}
 
@@ -110,6 +111,7 @@ class TJBotInfo {
 				npmPackage[entry[0].trim()] = entry[1].trim();
 			}
 		}
+		return npmPackage;
 	}
 
 	/**
