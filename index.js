@@ -64,16 +64,3 @@ socket.on('event', function(data){
 	console.log("event:" + param.target);
 	tj.handleEvent(param);
 });
-
-/*
-socket.on('update', function(data){
-	if (data == 'source') {
-		shell.exec('git pull');
-	} else if (data == 'nodejs') {
-		shell.exec('npm cache clean -f');
-		shell.exec('npm install -g n');
-		shell.exec('n stable');
-	} else if (data == 'npm') {
-		shell.exec('npm update -g');
-	}
-});*/
