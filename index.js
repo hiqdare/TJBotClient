@@ -44,7 +44,7 @@ console.log("Connecting to " + url);
 let socket = require('socket.io-client')(url);
 // called when connection established
 socket.on('start', function(data){
-	console.log("connected to " + url);
+	console.log("connected to " + url + " " + socket.id);
 	console.log((new Date()) + " " + data);
 	tj = new TJBotInfo();
 	socket.emit('checkin', JSON.stringify(tj.getData()));
