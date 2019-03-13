@@ -41,20 +41,21 @@ function getURL() {
 
 let url = getURL();
 console.log("Connecting to " + url);
-
 let socket = require('socket.io-client')(url);
 // called when connection established
 socket.on('start', function(data){
 	console.log("connected to " + url);
-	console.log(data);
+	console.log((new Date()) + " " + data);
 	tj = new TJBotInfo();
 	socket.emit('checkin', JSON.stringify(tj.getData()));
 });
 
 // called as reply to checkin event with initial config
 socket.on('config', function(data) {
+	console.log("Config received");
 	let config = JSON.parse(data);
-	tj.setConfiguration(config)
+	tj.setConfiguration(config);
+	console.log("Config set");
 });
 
 // called on browser event

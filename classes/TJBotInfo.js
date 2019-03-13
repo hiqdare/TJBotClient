@@ -8,13 +8,13 @@
 
 const os = require('os');
 const shell = require('shelljs');
-//let TJBOT = require('tjbot');
+let TJBOT = require('tjbot');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
 /*----------------------------------------------------------------------------*/
 
-const hardware = ['servo', 'led', 'microphone', 'speaker'];
+const hardware = [/*'servo', 'led',*/ 'microphone', 'speaker'];
 
 
 /*----------------------------------------------------------------------------*/
@@ -192,7 +192,6 @@ class TJBotInfo {
 
 			this.setCredentials(service, configList[service]);
 		}
-		//this.tj = new TJBOT(hardware, this.config, this.credentials);
 	}
 
 
