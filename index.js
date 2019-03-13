@@ -6,7 +6,7 @@
 /* IMPORTS                                                                    */
 /*----------------------------------------------------------------------------*/
 
-const TJBotInfo = require('./TJBotInfo.js');
+const TJBotInfo = require('./classes/TJBotInfo.js');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */

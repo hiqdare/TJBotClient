@@ -27,8 +27,7 @@ class TJBotInfo {
 	 *
 	 * @constructor
 	 */
-	constructor(vcapServices) {
-		this.vcapServices = vcapServices;
+	constructor(config) {
 		this.tjdata = {};
 		this.tjdata.os_type = os.type();
 		this.tjdata.os_release = os.release();
@@ -164,7 +163,6 @@ class TJBotInfo {
 	 */
 	configureService(configList) {
 		for (let service of Object.keys(configList)) {
-			let config = ;
 			switch (service) {
 				case 'text_to_speech':
 
