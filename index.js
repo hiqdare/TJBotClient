@@ -43,6 +43,7 @@ let url = getURL();
 console.log("Connecting to " + url);
 
 let socket = require('socket.io-client')(url);
+// called when connection established
 socket.on('start', function(data){
 	console.log("connected to " + url);
 	console.log(data);
@@ -50,14 +51,16 @@ socket.on('start', function(data){
 	socket.emit('checkin', JSON.stringify(tj.getData()));
 });
 
+// called as reply to checkin event with initial config
 socket.on('config', function(data) {
 	let config = JSON.parse(data);
 	tj.setConfiguration(config)
 });
 
+// called on browser event
 socket.on('event', function(data){
 	let param = JSON.parse(data);
-	console.log(param.target);
+	console.log("event:" + param.target);
 	tj.handleEvent(param);
 });
 

@@ -8,7 +8,7 @@
 
 const os = require('os');
 const shell = require('shelljs');
-let TJBOT = require('tjbot');
+//let TJBOT = require('tjbot');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
@@ -48,6 +48,7 @@ class TJBotInfo {
 			this.tjdata.os_info = this.getOSInfo();
 			this.tjdata.cpuinfo = this.getCPUInfo();
 		} else {
+			this.tjdata.cpuinfo = {};
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
 		}
 	}
@@ -57,7 +58,6 @@ class TJBotInfo {
 	}
 
 	setConfiguration(config) {
-		console.log(config);
 		this.configureService(config);
 		this.tj = new TJBOT(hardware, this.config, {});
 	}
@@ -141,31 +141,27 @@ class TJBotInfo {
 
 	/**
 	 * configures credentials
-	 * initialize tjbot libary
+	 * for given service
 	 * @param {string} service
+	 * @param {string} config
 	 */
-	initialize(service) {
-		if (!service) {
-			console.log("err");
+	setCredentials(service, config) {
+		if (!service || !config) {
+			throw new Error("initialize error, service or config not set");
 		}
 
-		/*if (!this.credentials[service]) {
+		if (!this.credentials[service]) {
 			this.credentials[service] = {};
-
-			if (!this.credentials[service].apikey || !this.credentials[service].url) {
-				this.credentials[service].apikey = this.vcapServices[service][0].credentials.apikey;
-				this.credentials[service].url = this.vcapServices[service][0].credentials.url;
-			}
 		}
 
-		this.tj = new TJBOT(hardware, this.config, this.credentials);*/
+		this.credentials[service].apikey = config.iam_apikey;
+		this.credentials[service].url = config.url;
 	}
 
 
 	/**
 	 * configures watson service
-	 * @param {string} service
-	 * @param {string} config
+	 * @param {string} configList list of configuration to be set
 	 */
 	configureService(configList) {
 		for (let service of Object.keys(configList)) {
@@ -180,8 +176,6 @@ class TJBotInfo {
 					if (!hardware.includes('speaker')) {
 						hardware.push('speaker');
 					}
-
-					this.initialize(service);
 					break;
 				case 'speech_to_text':
 			
@@ -193,13 +187,20 @@ class TJBotInfo {
 					if (!hardware.includes('microphone')) {
 						hardware.push('microphone');
 					}
-
-					this.initialize(service);
 					break;
 			}
+
+			this.setCredentials(service, configList[service]);
 		}
+		//this.tj = new TJBOT(hardware, this.config, this.credentials);
 	}
 
+
+
+	/**
+	 * make bot handle the event
+	 * @param {string} param parameters of the event
+	 */
 	handleEvent(param) {
 		switch(param.target) {
 			case 'arm':
