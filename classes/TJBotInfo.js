@@ -57,7 +57,8 @@ class TJBotInfo {
 	}
 
 	setConfiguration(config) {
-		this.tj = new TJBOT(hardware, tjConfig, {});
+		console.log(config);
+		this.tj = new TJBOT(hardware, this.config, {});
 	}
 
 	/**
