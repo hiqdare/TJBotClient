@@ -191,6 +191,7 @@ class TJBotInfo {
 					this.initialize(service);
 					break;
 			}
+		}
 	}
 
 	handleEvent(param) {
