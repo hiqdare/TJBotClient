@@ -101,7 +101,7 @@ class TJBotInfo {
 	/**
 	 * return list from shell command npm list
 	 */
-	getNPMPackage(this) {
+	getNPMPackage() {
 		let npmPackage = {};
 		shell.exec('npm list -g --depth 1', {silent:true}, this.setNPMPackage);
 		return npmPackage;
