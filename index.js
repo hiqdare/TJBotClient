@@ -38,7 +38,7 @@ function getURL() {
 
 tj = new TJBotInfo();
 
-shell.exec('npm list -g --depth 1', {silent:true}, function(code, stdout, stderr) {
+shell.exec('npm list --depth 1', {silent:true}, function(code, stdout, stderr) {
 	console.log("NPM Package code: " + code);
 	if (stderr) {
 		console.log(stderr);
