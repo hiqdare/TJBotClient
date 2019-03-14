@@ -62,7 +62,7 @@ class TJBotInfo {
 		}
 		console.log("DONE");
 	}
-
+/*
 	getData() {
 		return this.tjdata;
 	}
@@ -150,7 +150,7 @@ class TJBotInfo {
 	 * @param {string} service
 	 * @param {string} config
 	 */
-	setCredentials(service, config) {
+/*	setCredentials(service, config) {
 		if (!service || !config) {
 			throw new Error("initialize error, service or config not set");
 		}
@@ -168,7 +168,7 @@ class TJBotInfo {
 	 * configures watson service
 	 * @param {string} configList list of configuration to be set
 	 */
-	configureService(configList) {
+/*	configureService(configList) {
 		for (let service of Object.keys(configList)) {
 			switch (service) {
 				case 'text_to_speech':
@@ -208,7 +208,7 @@ class TJBotInfo {
 	 * make bot handle the event
 	 * @param {string} param parameters of the event
 	 */
-	handleEvent(param) {
+/*	handleEvent(param) {
 		switch(param.target) {
 			case 'arm':
 				if (param.action == 'wave') {
@@ -273,7 +273,7 @@ class TJBotInfo {
 				}
 				break;
 		}
-		
+/*		
 		/**
 		 * run shell command and print executed command
 		 * @param {string} command
