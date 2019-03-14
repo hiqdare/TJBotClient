@@ -62,7 +62,10 @@ class TJBotInfo {
 		}
 		console.log("DONE");
 	}
-/*
+	
+	/**
+	 * return tjbot information
+	 *
 	getData() {
 		return this.tjdata;
 	}
@@ -207,8 +210,8 @@ class TJBotInfo {
 	/**
 	 * make bot handle the event
 	 * @param {string} param parameters of the event
-	 */
-/*	handleEvent(param) {
+	 *
+	handleEvent(param) {
 		switch(param.target) {
 			case 'arm':
 				if (param.action == 'wave') {
@@ -273,16 +276,16 @@ class TJBotInfo {
 				}
 				break;
 		}
-/*		
-		/**
-		 * run shell command and print executed command
-		 * @param {string} command
-		 */
-		function shellexec(command) {
-			console.log("exec " + command);
-			shell.exec(command);
-		}
 	}
+		
+	/**
+	 * run shell command and print executed command
+	 * @param {string} command
+	 *
+	function shellexec(command) {
+		console.log("exec " + command);
+		shell.exec(command);
+	}*/
 }
 
 
