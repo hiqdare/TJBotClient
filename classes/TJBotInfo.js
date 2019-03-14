@@ -8,7 +8,7 @@
 
 const os = require('os');
 const shell = require('shelljs');
-//let TJBOT = require('tjbot');
+let TJBOT = require('tjbot');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
@@ -190,7 +190,7 @@ class TJBotInfo {
 			this.setCredentials(service, configList[service]);
 		}
 
-		//this.tj = new TJBOT(hardware, this.config, this.credentials);
+		this.tj = new TJBOT(hardware, this.config, this.credentials);
 		console.log("TJBot instance created");
 	}
 

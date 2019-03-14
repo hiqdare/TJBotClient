@@ -7,6 +7,7 @@
 /*----------------------------------------------------------------------------*/
 
 const TJBotInfo = require('./classes/TJBotInfo.js');
+const shell = require('shelljs');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
