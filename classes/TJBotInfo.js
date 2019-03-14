@@ -33,10 +33,10 @@ class TJBotInfo {
 		this.tjdata.os_release = os.release();
 		this.tjdata.os_platform = os.platform();
 		this.tjdata.nodejs_version = process.version;
-		this.tjdata.networkKey = this.getNetworkKeys();
+		//this.tjdata.networkKey = this.getNetworkKeys();
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
-		this.tjdata.npm_version = this.getNPMVersion();
-		this.tjdata.npm_package = this.getNPMPackage();
+		//this.tjdata.npm_version = this.getNPMVersion();
+		//this.tjdata.npm_package = this.getNPMPackage();
 		this.credentials = {};
 		this.config = {
 			log: {
@@ -45,8 +45,8 @@ class TJBotInfo {
 		};
 		if (this.tjdata.os_platform == 'linux') {
 			this.tjdata.hostname = shell.cat('/etc/hostname');
-			this.tjdata.os_info = this.getOSInfo();
-			this.tjdata.cpuinfo = this.getCPUInfo();
+			//this.tjdata.os_info = this.getOSInfo();
+			//this.tjdata.cpuinfo = this.getCPUInfo();
 		} else {
 			this.tjdata.cpuinfo = {};
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
@@ -62,7 +62,7 @@ class TJBotInfo {
 
 	/**
 	 * return list of network keys
-	 */
+	 *
 	getNetworkKeys() {
 		let interfaces = os.networkInterfaces();
 		let networkKeys = [];
@@ -86,7 +86,7 @@ class TJBotInfo {
 
 	/**
 	 * return list from shell command npm version
-	 */
+	 *
 	getNPMVersion() {
 		let npmVersion = {};
 		for (let npm_version of shell.exec('npm version', {silent:true}).replace(/[\'{}]/g, "").split(",")) {
@@ -100,7 +100,7 @@ class TJBotInfo {
 
 	/**
 	 * return list from shell command npm list
-	 */
+	 *
 	getNPMPackage() {
 		let npmPackage = {};
 		for (let part of shell.exec('npm list -g --depth 1', {silent:true}).replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
@@ -114,7 +114,7 @@ class TJBotInfo {
 
 	/**
 	 * get OS Information
-	 */
+	 *
 	getOSInfo() {
 		let osInfo = [];
 		for (let part of shell.cat('/etc/os-release').split(" ")) {
@@ -125,7 +125,7 @@ class TJBotInfo {
 
 	/**
 	 * get CPU Information
-	 */
+	 *
 	getCPUInfo() {
 		let cpuinfo = {};
 		for (let element of shell.cat('/proc/cpuinfo').split(/\r?\n/)) {
