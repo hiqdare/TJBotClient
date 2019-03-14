@@ -33,34 +33,24 @@ class TJBotInfo {
 		this.tjdata.os_release = os.release();
 		this.tjdata.os_platform = os.platform();
 		this.tjdata.nodejs_version = process.version;
-		console.log("getNetworkKeys");
 		this.tjdata.networkKey = this.getNetworkKeys();
-		console.log("firmware");
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
-		console.log("getNPMVersion");
-		this.tjdata.npm_version = this.getNPMVersion()
-		console.log("getNPMPackage");
+		this.tjdata.npm_version = this.getNPMVersion();
 		this.tjdata.npm_package = this.getNPMPackage();
-		console.log("credentials");
 		this.credentials = {};
-		console.log("config");
 		this.config = {
 			log: {
 				level: 'verbose'
 			}
 		};
-		console.log("linux");
 		if (this.tjdata.os_platform == 'linux') {
 			this.tjdata.hostname = shell.cat('/etc/hostname');
-			console.log("getOSInfo");
 			this.tjdata.os_info = this.getOSInfo();
-			console.log("getCPUInfo");
 			this.tjdata.cpuinfo = this.getCPUInfo();
 		} else {
 			this.tjdata.cpuinfo = {};
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
 		}
-		console.log("DONE");
 	}
 	
 	/**
