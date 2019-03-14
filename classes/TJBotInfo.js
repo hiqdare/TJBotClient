@@ -33,7 +33,7 @@ class TJBotInfo {
 		this.tjdata.os_release = os.release();
 		this.tjdata.os_platform = os.platform();
 		this.tjdata.nodejs_version = process.version;
-		//this.tjdata.networkKey = this.getNetworkKeys();
+		this.tjdata.networkKey = this.getNetworkKeys();
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
 		//this.tjdata.npm_version = this.getNPMVersion();
 		//this.tjdata.npm_package = this.getNPMPackage();
@@ -45,8 +45,8 @@ class TJBotInfo {
 		};
 		if (this.tjdata.os_platform == 'linux') {
 			this.tjdata.hostname = shell.cat('/etc/hostname');
-			//this.tjdata.os_info = this.getOSInfo();
-			//this.tjdata.cpuinfo = this.getCPUInfo();
+			this.tjdata.os_info = this.getOSInfo();
+			this.tjdata.cpuinfo = this.getCPUInfo();
 		} else {
 			this.tjdata.cpuinfo = {};
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
