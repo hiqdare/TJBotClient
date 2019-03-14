@@ -36,7 +36,8 @@ class TJBotInfo {
 		this.tjdata.networkKey = this.getNetworkKeys();
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
 		this.tjdata.npm_version = this.getNPMVersion();
-		//this.tjdata.npm_package = this.getNPMPackage();
+		this.tjdata.npm_package = {};
+		shell.exec('npm list -g --depth 1', {silent:true}, this.setNPMPackage);
 		this.credentials = {};
 		this.config = {
 			log: {
@@ -99,16 +100,7 @@ class TJBotInfo {
 	}
 
 	/**
-	 * return list from shell command npm list
-	 */
-	getNPMPackage() {
-		let npmPackage = {};
-		shell.exec('npm list -g --depth 1', {silent:true}, this.setNPMPackage);
-		return npmPackage;
-	}
-
-	/**
-	 * callback method for getNPMPackage function
+	 * callback method for shell.exec function
 	 * @param code call code
 	 * @param stdout call return value
 	 * @param stderr error message 
@@ -121,7 +113,7 @@ class TJBotInfo {
 			for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
 				let entry = part.split("@");
 				if (entry.length == 2) {
-					npmPackage[entry[0].trim()] = entry[1].trim();
+					this.npm_package[entry[0].trim()] = entry[1].trim();
 				}
 			}
 		}
