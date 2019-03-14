@@ -41,9 +41,6 @@ class TJBotInfo {
 		this.config = {
 			log: {
 				level: 'verbose'
-			},
-			robot: {
-				name: "Georgy";
 			}
 		};
 		if (this.tjdata.os_platform == 'linux') {
