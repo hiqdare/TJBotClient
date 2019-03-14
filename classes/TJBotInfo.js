@@ -35,7 +35,7 @@ class TJBotInfo {
 		this.tjdata.nodejs_version = process.version;
 		this.tjdata.networkKey = this.getNetworkKeys();
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
-		//this.tjdata.npm_version = this.getNPMVersion();
+		this.tjdata.npm_version = this.getNPMVersion();
 		//this.tjdata.npm_package = this.getNPMPackage();
 		this.credentials = {};
 		this.config = {
