@@ -55,14 +55,14 @@ class TJBotInfo {
 	
 	/**
 	 * return tjbot information
-	 *
+	 */
 	getData() {
 		return this.tjdata;
 	}
 
 	/**
 	 * return list of network keys
-	 *
+	 */
 	getNetworkKeys() {
 		let interfaces = os.networkInterfaces();
 		let networkKeys = [];
@@ -86,7 +86,7 @@ class TJBotInfo {
 
 	/**
 	 * return list from shell command npm version
-	 *
+	 */
 	getNPMVersion() {
 		let npmVersion = {};
 		for (let npm_version of shell.exec('npm version', {silent:true}).replace(/[\'{}]/g, "").split(",")) {
@@ -100,7 +100,7 @@ class TJBotInfo {
 
 	/**
 	 * return list from shell command npm list
-	 *
+	 */
 	getNPMPackage() {
 		let npmPackage = {};
 		for (let part of shell.exec('npm list -g --depth 1', {silent:true}).replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
@@ -114,7 +114,7 @@ class TJBotInfo {
 
 	/**
 	 * get OS Information
-	 *
+	 */
 	getOSInfo() {
 		let osInfo = [];
 		for (let part of shell.cat('/etc/os-release').split(" ")) {
@@ -125,7 +125,7 @@ class TJBotInfo {
 
 	/**
 	 * get CPU Information
-	 *
+	 */
 	getCPUInfo() {
 		let cpuinfo = {};
 		for (let element of shell.cat('/proc/cpuinfo').split(/\r?\n/)) {
@@ -143,7 +143,7 @@ class TJBotInfo {
 	 * @param {string} service
 	 * @param {string} config
 	 */
-/*	setCredentials(service, config) {
+	setCredentials(service, config) {
 		if (!service || !config) {
 			throw new Error("initialize error, service or config not set");
 		}
@@ -161,7 +161,7 @@ class TJBotInfo {
 	 * configures watson service
 	 * @param {string} configList list of configuration to be set
 	 */
-/*	configureService(configList) {
+	configureService(configList) {
 		for (let service of Object.keys(configList)) {
 			switch (service) {
 				case 'text_to_speech':
@@ -200,7 +200,7 @@ class TJBotInfo {
 	/**
 	 * make bot handle the event
 	 * @param {string} param parameters of the event
-	 *
+	 */
 	handleEvent(param) {
 		switch(param.target) {
 			case 'arm':
@@ -218,27 +218,27 @@ class TJBotInfo {
 				}
 				break;
 			case 'source':
-				shellexec('git pull');
-				shellexec('npm install');
+				this.shellexec('git pull');
+				this.shellexec('npm install');
 				break;
 			case 'nodejs':
-				shellexec('npm cache clean -f');
-				shellexec('npm install -g n');
-				shellexec('n 9.11.2');
-				shellexec('rs');
+				this.shellexec('npm cache clean -f');
+				this.shellexec('npm install -g n');
+				this.shellexec('n 9.11.2');
+				this.shellexec('rs');
 				break;
 			case 'npm':
-				shellexec('npm update -g');
-				shellexec('rs');
+				this.shellexec('npm update -g');
+				this.shellexec('rs');
 				break;
 			case 'nodemon':
-				shellexec('npm i -g nodemon');
-				shellexec('rs');
+				this.shellexec('npm i -g nodemon');
+				this.shellexec('rs');
 				break;
 			case 'firmware':
-				shellexec('apt-get update');
-				shellexec('apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
-				shellexec('rs');
+				this.shellexec('apt-get update');
+				this.shellexec('apt-get install --reinstall raspberrypi-bootloader raspberrypi-kernel');
+				this.shellexec('rs');
 				break;
 			case 'service':
 				this.configureService(param.config);
@@ -271,11 +271,11 @@ class TJBotInfo {
 	/**
 	 * run shell command and print executed command
 	 * @param {string} command
-	 *
-	function shellexec(command) {
+	 */
+	shellexec(command) {
 		console.log("exec " + command);
 		shell.exec(command);
-	}*/
+	}
 }
 
 
