@@ -27,7 +27,7 @@ class TJBotInfo {
 	 *
 	 * @constructor
 	 */
-	constructor() {
+	constructor(callback) {
 		this.tjdata = {};
 		this.tjdata.os_type = os.type();
 		this.tjdata.os_release = os.release();
@@ -37,7 +37,6 @@ class TJBotInfo {
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
 		this.tjdata.npm_version = this.getNPMVersion();
 		this.tjdata.npm_package = {};
-		shell.exec('npm list -g --depth 1', {silent:true}, this.setNPMPackage);
 		this.credentials = {};
 		this.config = {
 			log: {
@@ -101,20 +100,13 @@ class TJBotInfo {
 
 	/**
 	 * callback method for shell.exec function
-	 * @param code call code
 	 * @param stdout call return value
-	 * @param stderr error message 
 	 */
-	setNPMPackage(code, stdout, stderr) {
-		console.log("NPM Package code: " + code);
-		if (stderr) {
-			console.log(stderr);
-		} else {
-			for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
-				let entry = part.split("@");
-				if (entry.length == 2) {
-					this.npm_package[entry[0].trim()] = entry[1].trim();
-				}
+	setNPMPackage(stdout) {
+		for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
+			let entry = part.split("@");
+			if (entry.length == 2) {
+				this.npm_package[entry[0].trim()] = entry[1].trim();
 			}
 		}
 	}

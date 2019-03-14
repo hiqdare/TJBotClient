@@ -37,6 +37,17 @@ function getURL() {
 
 tj = new TJBotInfo();
 
+shell.exec('npm list -g --depth 1', {silent:true}, function(code, stdout, stderr) {
+	console.log("NPM Package code: " + code);
+	if (stderr) {
+		console.log(stderr);
+	} else {
+		tj.setNPMPackage(stdout);
+	}
+});
+
+
+
 let url = getURL();
 console.log("Connecting to " + url);
 let socket = require('socket.io-client')(url);
