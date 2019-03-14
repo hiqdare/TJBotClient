@@ -36,7 +36,6 @@ class TJBotInfo {
 		this.tjdata.networkKey = this.getNetworkKeys();
 		this.tjdata.firmware = shell.exec('/opt/vc/bin/vcgencmd version', {silent:true}).split(/\r?\n/);
 		this.tjdata.npm_version = this.getNPMVersion();
-		this.tjdata.npm_package = {};
 		this.credentials = {};
 		this.config = {
 			log: {
@@ -103,10 +102,11 @@ class TJBotInfo {
 	 * @param stdout call return value
 	 */
 	setNPMPackage(stdout) {
+		this.tjdata.npm_package = {};
 		for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
 			let entry = part.split("@");
 			if (entry.length == 2) {
-				this.npm_package[entry[0].trim()] = entry[1].trim();
+				this.tjdata.npm_package[entry[0].trim()] = entry[1].trim();
 			}
 		}
 	}
