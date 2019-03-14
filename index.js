@@ -17,9 +17,6 @@ let tj;
 /* PRIVATE FUNCTION				                                              */
 /*----------------------------------------------------------------------------*/
 
-
-
-
 /**
  * gets URL from TJBotBrowser
  */
@@ -38,6 +35,7 @@ function getURL() {
 /* MAIN 						                                              */
 /*----------------------------------------------------------------------------*/
 
+tj = new TJBotInfo();
 
 let url = getURL();
 console.log("Connecting to " + url);
@@ -46,7 +44,6 @@ let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url + " " + socket.id);
 	console.log(data + " " + (new Date()));
-	tj = new TJBotInfo();
 	socket.emit('checkin', JSON.stringify(tj.getData()));
 });
 
