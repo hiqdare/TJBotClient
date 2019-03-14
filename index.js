@@ -6,12 +6,12 @@
 /* IMPORTS                                                                    */
 /*----------------------------------------------------------------------------*/
 
-const TJBotInfo = require('./classes/TJBotInfo.js');
+//const TJBotInfo = require('./classes/TJBotInfo.js');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
 /*----------------------------------------------------------------------------*/
-let tj;
+//let tj;
 
 /*----------------------------------------------------------------------------*/
 /* PRIVATE FUNCTION				                                              */
@@ -46,12 +46,12 @@ let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url + " " + socket.id);
 	console.log((new Date()) + " " + data);
-	tj = new TJBotInfo();
+	/*tj = new TJBotInfo();*/
 	socket.emit('checkin', JSON.stringify(tj.getData()));
 });
 
 // called as reply to checkin event with initial config
-socket.on('init_config', function(data) {
+/*socket.on('init_config', function(data) {
 	console.log("Config received");
 	let config = JSON.parse(data);
 	tj.setConfiguration(config);
@@ -63,4 +63,4 @@ socket.on('event', function(data){
 	let param = JSON.parse(data);
 	console.log("event:" + param.target);
 	tj.handleEvent(param);
-});
+});*/
