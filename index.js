@@ -46,18 +46,18 @@ let socket = require('socket.io-client')(url);
 socket.on('start', function(data){
 	console.log("connected to " + url + " " + socket.id);
 	console.log((new Date()) + " " + data);
-	tj = new TJBotInfo();
-	socket.emit('checkin', JSON.stringify(tj.getData()));
+	//tj = new TJBotInfo();
+	socket.emit('checkin', ""/*JSON.stringify(tj.getData())*/);
 });
 
 // called as reply to checkin event with initial config
-/*socket.on('init_config', function(data) {
+socket.on('init_config', function(data) {
 	console.log("Config received");
 	let config = JSON.parse(data);
-	tj.setConfiguration(config);
+	//tj.configureService(config);
 	console.log("Config set");
 });
-
+/*
 // called on browser event
 socket.on('event', function(data){
 	let param = JSON.parse(data);

@@ -8,7 +8,7 @@
 
 const os = require('os');
 const shell = require('shelljs');
-let TJBOT = require('tjbot');
+//let TJBOT = require('tjbot');
 
 /*----------------------------------------------------------------------------*/
 /* DECLARATION AND INITIALIZATION                                             */
@@ -41,6 +41,9 @@ class TJBotInfo {
 		this.config = {
 			log: {
 				level: 'verbose'
+			},
+			robot: {
+				name: "Georgy";
 			}
 		};
 		if (this.tjdata.os_platform == 'linux') {
@@ -55,10 +58,6 @@ class TJBotInfo {
 
 	getData() {
 		return this.tjdata;
-	}
-
-	setConfiguration(config) {
-		this.configureService(config);
 	}
 
 	/**
@@ -192,7 +191,7 @@ class TJBotInfo {
 			this.setCredentials(service, configList[service]);
 		}
 
-		this.tj = new TJBOT(hardware, this.config, this.credentials);
+		//this.tj = new TJBOT(hardware, this.config, this.credentials);
 		console.log("TJBot instance created");
 	}
 
