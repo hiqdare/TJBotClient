@@ -53,7 +53,7 @@ socket.on('start', function(data){
 // called as reply to checkin event with initial config
 socket.on('init_config', function(data) {
 	console.log("Config received");
-	let config = JSON.parse(data);
+	//let config = JSON.parse(data);
 	//tj.configureService(config);
 	console.log("Config set");
 });
