@@ -261,19 +261,18 @@ class TJBotInfo {
 	}
 
 	startListening(msg) {
-		let thistj = this.tj;
-		let thissocket = this.socket;
-		if (this.config.listen != null && this.config.listen.language != null ) {
-			console.log("config" + JSON.stringify(this.config));
-			this.tj.listen(function(msg) {
-				thissocket.emit('listen', msg)
-				if (this.config.speak != null && this.config.speak.voice != null) {
-					thistj.speak(msg);
+		let tjbot = this;
+		if (tjbot.config.listen != null && tjbot.config.listen.language != null ) {
+			console.log("config" + JSON.stringify(tjbot.config));
+			tjbot.tj.listen(function(msg) {
+				tjbot.socket.emit('listen', msg)
+				if (tjbot.config.speak != null && tjbot.config.speak.voice != null) {
+					tjbot.tj.speak(msg);
 				}
 			});
-		} else if (this.config.listen == null) {
+		} else if (tjbot.config.listen == null) {
 			console.log("listen is null");
-		} else if (this.config.listen.language == null) {
+		} else if (tjbot.config.listen.language == null) {
 			console.log("language is null");
 		}
 	}
