@@ -248,8 +248,8 @@ class TJBotInfo {
 					console.log("Mic ON");
 					if (this.config.listen != null && this.config.listen.language != null ) {
 						console.log("Mic listening");
-						console.log("config" + this.tj.config);
-						console.log("credentials" + this.tj.credentials);
+						console.log("config" + this.config);
+						console.log("credentials" + this.credentials);
 						this.tj.listen(function(msg) {
 							console.log("Mic heard " + msg);
 							//socket.emit('listen', msg)
