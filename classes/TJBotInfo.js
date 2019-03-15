@@ -251,18 +251,8 @@ class TJBotInfo {
 				this.configureService(param.config);
 				break;
 			case 'microphone':
-				console.log(param.action);
 				if (param.action == "on") {
-					console.log("Mic ON");
-					if (this.config.listen != null && this.config.listen.language != null ) {
-						console.log("Mic listening");
-						console.log("config" + JSON.stringify(this.config));
-						this.tj.listen(this.processMessage);
-					} else if (this.config.listen == null) {
-						console.log("listen is null");
-					} else if (this.config.listen.language == null) {
-						console.log("language is null");
-					}
+					this.startListening
 				} else {
 					this.tj.stopListening();
 				}
@@ -270,11 +260,21 @@ class TJBotInfo {
 		}
 	}
 
-	processMessage(msg) {
-		console.log("Mic heard " + msg);
-		this.socket.emit('listen', msg)
-		if (this.config.speak != null && this.config.speak.voice != null) {
-			this.tj.speak(msg);
+	startListening(msg) {
+		let thistj = this.tj;
+		let thissocket = this.socket;
+		if (this.config.listen != null && this.config.listen.language != null ) {
+			console.log("config" + JSON.stringify(this.config));
+			this.tj.listen(function(msg) {
+				thissocket.emit('listen', msg)
+				if (this.config.speak != null && this.config.speak.voice != null) {
+					thistj.speak(msg);
+				}
+			});
+		} else if (this.config.listen == null) {
+			console.log("listen is null");
+		} else if (this.config.listen.language == null) {
+			console.log("language is null");
 		}
 	}
 		
