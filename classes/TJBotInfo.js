@@ -252,7 +252,7 @@ class TJBotInfo {
 				break;
 			case 'microphone':
 				if (param.action == "on") {
-					this.startListening
+					this.startListening();
 				} else {
 					this.tj.stopListening();
 				}
