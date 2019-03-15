@@ -250,6 +250,7 @@ class TJBotInfo {
 						console.log("Mic listening");
 						console.log("config" + this.config);
 						console.log("credentials" + this.credentials);
+						console.log("tj" + this.tj);
 						this.tj.listen(function(msg) {
 							console.log("Mic heard " + msg);
 							//socket.emit('listen', msg)
