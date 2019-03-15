@@ -58,6 +58,13 @@ class TJBotInfo {
 	getData() {
 		return this.tjdata;
 	}
+	
+	/**
+	 * set socket to send results to
+	 */
+	setSocket(socket) {
+		this.socket = socket;
+	}
 
 	/**
 	 * return list of network keys
@@ -250,15 +257,7 @@ class TJBotInfo {
 					if (this.config.listen != null && this.config.listen.language != null ) {
 						console.log("Mic listening");
 						console.log("config" + JSON.stringify(this.config));
-						console.log("credentials" + JSON.stringify(this.credentials));
-						console.log("tj" + JSON.stringify(this.tj));
-						this.tj.listen(function(msg) {
-							console.log("Mic heard " + msg);
-							//socket.emit('listen', msg)
-							if (this.config.speak != null && this.config.speak.voice != null) {
-								this.tj.speak(msg);
-							}
-						});
+						this.tj.listen(this.processMessage);
 					} else if (this.config.listen == null) {
 						console.log("listen is null");
 					} else if (this.config.listen.language == null) {
@@ -268,6 +267,14 @@ class TJBotInfo {
 					this.tj.stopListening();
 				}
 				break;
+		}
+	}
+
+	processMessage(msg) {
+		console.log("Mic heard " + msg);
+		this.socket.emit('listen', msg)
+		if (this.config.speak != null && this.config.speak.voice != null) {
+			this.tj.speak(msg);
 		}
 	}
 		

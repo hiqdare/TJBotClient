@@ -52,6 +52,7 @@ shell.exec('npm list --depth 1', {silent:true}, function(code, stdout, stderr) {
 		socket.on('start', function(data){
 			console.log("connected to " + url + " " + socket.id);
 			console.log(data + " " + (new Date()));
+			tj.setSocket(socket);
 			socket.emit('checkin', JSON.stringify(tj.getData()));
 		});
 		
