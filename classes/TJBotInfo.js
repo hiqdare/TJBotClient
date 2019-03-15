@@ -169,6 +169,7 @@ class TJBotInfo {
 						this.config.speak = {};
 					}
 					this.config.speak.voice = configList[service].option;
+					this.config.speak.language = configList[service].option.split("_")[0];
 
 					if (!hardware.includes('speaker')) {
 						hardware.push('speaker');
