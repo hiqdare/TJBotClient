@@ -111,7 +111,7 @@ class TJBotInfo {
 	 */
 	setNPMPackage(callback) {
 		this.tjdata.npm_package = {};
-		npmPack = this.tjdata.npm_package;
+		let npmPack = this.tjdata.npm_package;
 		shell.exec('npm list --depth 1', {silent:true}, function(code, stdout, stderr) {
 			if (stderr) {
 				callback(code, stderr);
