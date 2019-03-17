@@ -38,7 +38,7 @@ function getURL() {
 
 tj = new TJBotInfo();
 
-tj.init(function(code, stderr) {
+tj.setNPMPackage(function(code, stderr) {
 	console.log("NPM Package code: " + code);
 	if (stderr) {
 		console.log(stderr);
