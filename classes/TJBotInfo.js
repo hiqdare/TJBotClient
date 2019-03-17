@@ -104,18 +104,39 @@ class TJBotInfo {
 		return npmVersion;
 	}
 
+	
 	/**
 	 * callback method for shell.exec function
-	 * @param stdout call return value
+	 * @param callback callback function
 	 */
-	setNPMPackage(stdout) {
+	setNPMPackage(callback) {
 		this.tjdata.npm_package = {};
-		for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
-			let entry = part.split("@");
-			if (entry.length == 2) {
-				this.tjdata.npm_package[entry[0].trim()] = entry[1].trim();
+		npmPack = this.tjdata.npm_package;
+		shell.exec('npm list --depth 1', {silent:true}, function(code, stdout, stderr) {
+			if (stderr) {
+				callback(code, stderr);
+			} else {
+				for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
+					let entry = part.split("@");
+					if (entry.length == 2) {
+						npmPack[entry[0].trim()] = entry[1].trim();
+					}
+				}
+				shell.exec('npm list -g --depth 0', {silent:true}, function(code, stdout, stderr) {
+					if (stderr) {
+						callback(code, stderr);
+					} else {
+						for (let part of stdout.replace(/[\-└┬─├│]/g, "").split(/\r?\n/)) {
+							let entry = part.split("@");
+							if (entry.length == 2) {
+								npmPack[entry[0].trim()] = entry[1].trim();
+							}
+						}
+						callback(code);
+					}
+				});
 			}
-		}
+		});
 	}
 
 	/**
