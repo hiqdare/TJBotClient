@@ -301,11 +301,8 @@ class TJBotInfo {
 					tjbot.tj.speak(msg);
 				}
 				if (tjbot.config.converse != null && tjbot.config.converse.workspaceId != null) {
-					tjbot.tj.converse(tjbot.config.converse.workspaceId, msg, function(err, output) {
-						if (err) {
-							console.log(err);
-						}
-						tjbot.socket.emit('output', output)
+					tjbot.tj.converse(tjbot.config.converse.workspaceId, msg, function(output) {
+						tjbot.socket.emit('output', output.description);
 					});
 				}
 			});
