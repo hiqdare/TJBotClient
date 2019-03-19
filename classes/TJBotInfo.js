@@ -51,14 +51,14 @@ class TJBotInfo {
 			this.tjdata.cpuinfo.Serial = "test-serial-1234";
 		}
 	}
-	
+
 	/**
 	 * return tjbot information
 	 */
 	getData() {
 		return this.tjdata;
 	}
-	
+
 	/**
 	 * set socket to send results to
 	 */
@@ -78,7 +78,7 @@ class TJBotInfo {
 				if ('IPv4' !== iface.family || iface.internal !== false) {
 					return;
 				}
-		
+
 				if (alias >=  1) {
 					networkKeys.push(interfaceName + ':' + alias, iface.address);
 				} else {
@@ -104,7 +104,7 @@ class TJBotInfo {
 		return npmVersion;
 	}
 
-	
+
 	/**
 	 * callback method for shell.exec function
 	 * @param callback callback function
@@ -204,7 +204,7 @@ class TJBotInfo {
 					}
 					break;
 				case 'speech_to_text':
-			
+
 					if (!this.config.hasOwnProperty('listen')) {
 						this.config.listen = {};
 					}
@@ -214,6 +214,16 @@ class TJBotInfo {
 						hardware.push('microphone');
 					}
 					break;
+
+				case 'assistant':
+
+					if (!this.config.hasOwnProperty('converse')) {
+						this.config.converse = {};
+					}
+					this.config.converse.workspaceId = configList[service].option;
+
+					break;
+
 			}
 
 			this.setCredentials(service, configList[service]);
@@ -290,6 +300,14 @@ class TJBotInfo {
 				if (tjbot.config.speak != null && tjbot.config.speak.voice != null) {
 					tjbot.tj.speak(msg);
 				}
+				if (tjbot.config.converse != null && tjbot.config.converse.workspaceId != null) {
+					tjbot.tj.converse(tjbot.config.converse.workspaceId, msg, function(err, output) {
+						if (err) {
+							console.log(err);
+						}
+						tjbot.socket.emit('output', output)
+					});
+				}
 			});
 		} else if (tjbot.config.listen == null) {
 			console.log("listen is null");
@@ -297,7 +315,7 @@ class TJBotInfo {
 			console.log("language is null");
 		}
 	}
-		
+
 	/**
 	 * run shell command and print executed command
 	 * @param {string} command
