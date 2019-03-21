@@ -1,7 +1,7 @@
 {
   "name": "tjbotclient",
   "description": "TJBot client, running locally to connect with TJBotBrowser on the cloud",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Henrique Säuberli sae@zurich.ibm.com",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
     "dedupe": "^2.1.0",
     "shelljs": "^0.8.3",
     "socket.io-client": "^2.1.1",
-    "tjbot": "latest"
+    "tjbot": "latest",
+    "watson-developer-cloud": "^3.18"
   },
   "license": "Apache-2.0",
   "repository": {
